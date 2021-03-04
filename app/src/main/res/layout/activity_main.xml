@@ -62,9 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="avatar,published,menu"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="80dp" />
+        app:constraint_referenced_ids="avatar,published,menu" />
 
     <TextView
         android:id="@+id/content"
@@ -81,14 +79,14 @@
         android:id="@+id/like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_spacing"
         android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginEnd="@dimen/common_spacing"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/barrier2"
-        app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
+        app:srcCompat="@drawable/ic_baseline_favorite_border_24"
+        android:contentDescription="@string/description_likes" />
 
     <TextView
         android:id="@+id/countLike"
@@ -113,7 +111,7 @@
         app:layout_constraintStart_toEndOf="@+id/countLike"
         app:layout_constraintTop_toTopOf="@+id/barrier2"
         app:srcCompat="@drawable/ic_baseline_share_24"
-        tools:layout_editor_absoluteY="672dp" />
+        android:contentDescription="@string/description_repost" />
 
     <TextView
         android:id="@+id/countRepost"
@@ -132,10 +130,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="@dimen/common_spacing"
         app:layout_constraintEnd_toStartOf="@+id/countViewing"
         app:layout_constraintTop_toTopOf="@+id/barrier2"
-        app:srcCompat="@drawable/ic_baseline_remove_red_eye_24" />
+        app:srcCompat="@drawable/ic_baseline_remove_red_eye_24"
+        android:contentDescription="@string/description_viewing" />
 
     <TextView
         android:id="@+id/countViewing"

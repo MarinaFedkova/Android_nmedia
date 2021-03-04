@@ -3,4 +3,7 @@
     <string name="hellostring">НМедиа!</string>
     <string name="description_post_author_avatar">Аватар автора поста</string>
     <string name="description_post_menu">Меню поста</string>
+    <string name="description_likes">Лайк</string>
+    <string name="description_repost">Репост</string>
+    <string name="description_viewing">Просмотры</string>
 </resources>
