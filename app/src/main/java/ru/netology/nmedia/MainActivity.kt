@@ -40,10 +40,18 @@ class MainActivity : AppCompatActivity() {
                 countLike.setText(
                     if (post.likedByMe) displayNumbers(countLikes--) else displayNumbers(countLikes++)
                 )
+                Log.d("Tag", "done_Like")
             }
             repost?.setOnClickListener {
                 countRepost.setText(displayNumbers(countReposts++))
+                Log.d("Tag", "done_Repost")
             }
+            root?.setOnClickListener {
+                Log.d("Tag", "done_root")
+            }
+//            avatar?.setOnClickListener {
+//                Log.d("Tag", "Avatar")
+//            }
         }
     }
 
