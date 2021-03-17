@@ -39,10 +39,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-//            root?.setOnClickListener {
-//                Log.d("Tag", "done_root")
-//            }
-//            avatar?.setOnClickListener {
-//                Log.d("Tag", "Avatar")
-//            }
