@@ -2,6 +2,7 @@ package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,16 +12,20 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepositoryInMemoryImpl
 import java.text.DecimalFormat
 
-typealias OnLikeListener = (post: Post) -> Unit
-typealias OnRepostListener = (post: Post) -> Unit
+interface OnInterfactionListener {
+    fun onLike(post: Post) {}
+    fun onEdit(post: Post) {}
+    fun onRemove(post: Post) {}
+    fun onRepost(post: Post) {}
+
+}
 
 class PostsAdapter(
-    private val onLikeListener: OnLikeListener,
-    private val onRepostListener: OnRepostListener
+    private val onInterfactionListener: OnInterfactionListener,
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = PostCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding, onLikeListener, onRepostListener)
+        return PostViewHolder(binding, onInterfactionListener)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
@@ -31,8 +36,7 @@ class PostsAdapter(
 
 class PostViewHolder(
     private val binding: PostCardBinding,
-    private val onLikeListener: OnLikeListener,
-    private val onRepostListener: OnRepostListener
+    private val onInterfactionListener: OnInterfactionListener
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
         binding.apply {
@@ -42,14 +46,37 @@ class PostViewHolder(
             like.setImageResource(
                 if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
             )
+            menu.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.options_post)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.remove -> {
+                                onInterfactionListener.onRemove(post)
+                                true
+                            }
+                            R.id.edit -> {
+                                onInterfactionListener.onEdit(post)
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                }.show()
+            }
             like.setOnClickListener {
-                onLikeListener(post)
+                onInterfactionListener.onLike(post)
             }
             repost.setOnClickListener {
-                onRepostListener(post)
+                onInterfactionListener.onRepost(post)
             }
             countLike.text = displayNumbers(post.likes)
             countRepost.text = displayNumbers(post.reposts)
+            //добавить обработчик клика на поле эдит (чтобы появлялась группа отмены)
+            //и обрботчик клика на крестик для отмены
+//            content.setOnClickListener {
+//                binding.group.visibility = View.VISIBLE
+//            }
         }
     }
     private fun displayNumbers(number: Long): String {
@@ -73,21 +100,4 @@ class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
         return oldItem == newItem
     }
 }
-//countLike.setText(
-//if (post.likedByMe) displayNumbers(countLikes--) else displayNumbers(countLikes++)
-//)
-//}
-//                    countLike.text = viewModel.displayLikes(post.likes)
-//                    countRepost.text = viewModel.displayReposts(post.reposts)
-//                    like.setOnClickListener {
-//                        viewModel.likeById(post.id)
-//                    }
-//                    repost.setOnClickListener {
-//                        viewModel.repost()
-//                    }
-//        binding.like.setOnClickListener {
-//            viewModel.like()
-//        }
-//        binding.repost.setOnClickListener {
-//            viewModel.repost()
-//        }
+

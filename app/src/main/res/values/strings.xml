@@ -6,4 +6,10 @@
     <string name="description_likes">Likes</string>
     <string name="description_repost">Reposts</string>
     <string name="description_viewing">Viewing</string>
+    <string name="description_post_save">Save</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_remove">Remove</string>
+    <string name="post_text">Post Text</string>
+    <string name="error_empty_content">Content can\'t be empty</string>
+    <string name="text_edit">Edit message</string>
 </resources>
