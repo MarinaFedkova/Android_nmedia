@@ -83,7 +83,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.content.setOnClickListener {
             binding.group.visibility = View.VISIBLE
-            Log.d("tag", "click")
         }
 
         binding.cancel.setOnClickListener {

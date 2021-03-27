@@ -54,13 +54,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:icon="@drawable/ic_baseline_more_vert_24"
         style="@style/Widget.AppTheme.Viewing">
-
     </com.google.android.material.button.MaterialButton>
-
-    <!--ImageButton
-        android:layout_marginBottom="@dimen/common_spacing"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_baseline_more_vert_24" /-->
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
