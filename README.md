@@ -12,3 +12,5 @@
 17.03.2021 home work 6 «2.3. Отображение списков: RecyclerView»
 
 20.03.2021 home work 7 «2.4. CRUD: списки, добавление, удаление, изменение»
+
+27.03.2021 home work 8 «3.1. Material Design»

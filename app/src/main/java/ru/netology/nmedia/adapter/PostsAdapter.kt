@@ -43,9 +43,11 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            like.setImageResource(
-                if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
-            )
+            like.isChecked = post.likedByMe
+            like.text = "${post.likes}"
+//            like.setImageResource(
+//                if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
+//            )
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -70,15 +72,11 @@ class PostViewHolder(
             repost.setOnClickListener {
                 onInterfactionListener.onRepost(post)
             }
-            countLike.text = displayNumbers(post.likes)
-            countRepost.text = displayNumbers(post.reposts)
-            //добавить обработчик клика на поле эдит (чтобы появлялась группа отмены)
-            //и обрботчик клика на крестик для отмены
-//            content.setOnClickListener {
-//                binding.group.visibility = View.VISIBLE
-//            }
+            like.text = displayNumbers(post.likes)
+            repost.text = displayNumbers(post.reposts)
         }
     }
+
     private fun displayNumbers(number: Long): String {
         val decimalFormat = DecimalFormat("#.#")
         return when (number) {
