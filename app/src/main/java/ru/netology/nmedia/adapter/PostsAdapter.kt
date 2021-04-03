@@ -19,7 +19,6 @@ interface OnInterfactionListener {
     fun onRemove(post: Post) {}
     fun onRepost(post: Post) {}
     fun onVideo(post: Post) {}
-
 }
 
 class PostsAdapter(
@@ -49,7 +48,7 @@ class PostViewHolder(
             like.text = "${post.likes}"
             if (!post.videoUrl.isNullOrEmpty()) {
                 video.visibility = View.VISIBLE
-            }   else video.visibility = View.GONE
+            } else video.visibility = View.GONE
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
