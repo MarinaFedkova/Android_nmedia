@@ -13,7 +13,8 @@ private val empty = Post(
     published = "",
     likedByMe = false,
     likes = 0,
-    reposts = 0
+    reposts = 0,
+    videoUrl = ""
 )
 
 class PostViewModel : ViewModel() {
@@ -23,6 +24,7 @@ class PostViewModel : ViewModel() {
     fun likeById(id: Long) = repository.likeById(id)
     fun repostById(id: Long) = repository.repostById(id)
     fun removeById(id: Long) = repository.removeById(id)
+    fun video() = repository.video()
 
     fun save() {
         edited.value?.let {

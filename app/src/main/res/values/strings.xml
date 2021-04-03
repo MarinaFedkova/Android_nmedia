@@ -12,4 +12,7 @@
     <string name="post_text">Post Text</string>
     <string name="error_empty_content">Content can\'t be empty</string>
     <string name="text_edit">Edit message</string>
+    <string name="chooser_repost">Repost</string>
+    <string name="add_post">Add Post</string>
+    <string name="save">Save</string>
 </resources>

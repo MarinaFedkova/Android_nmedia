@@ -1,13 +1,14 @@
 package ru.netology.nmedia.activity
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.launch
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
-import kotlinx.android.synthetic.main.activity_main.view.*
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.R
@@ -28,8 +29,8 @@ class MainActivity : AppCompatActivity() {
         val viewModel: PostViewModel by viewModels()
         val adapter = PostsAdapter(object : OnInterfactionListener {
             override fun onEdit(post: Post) {
-                binding.group.visibility = View.VISIBLE
                 viewModel.edit(post)
+
             }
 
             override fun onLike(post: Post) {
@@ -40,58 +41,52 @@ class MainActivity : AppCompatActivity() {
                 viewModel.removeById(post.id)
             }
 
-            override fun onRepost(post: Post)  {
-            viewModel.repostById(post.id)
-        }
-    })
+            override fun onRepost(post: Post) {
+                viewModel.repostById(post.id)
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    type = "text/plane"
+                }
+                val repostIntent = Intent.createChooser(intent, getString(R.string.chooser_repost))
+                startActivity(repostIntent)
+            }
+
+            override fun onVideo(post: Post) {
+                post.videoUrl?.let { viewModel.video() }
+                if (!post.videoUrl.isNullOrEmpty()) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
+                    startActivity(intent)
+                }
+            }
+
+        })
 
         binding.list.adapter = adapter
         viewModel.data.observe(this, { posts ->
             adapter.submitList(posts)
         })
 
-        viewModel.edited.observe(this, { post ->
-            if (post.id == 0L) {
+        val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
+            result ?: return@registerForActivityResult
+            viewModel.changeContent(result)
+            viewModel.save()
+        }
+
+        binding.fab.setOnClickListener {
+            newPostLauncher.launch()
+        }
+        val editPostLauncher = registerForActivityResult(EditPostResultContract()) { result ->
+            result ?: return@registerForActivityResult
+            viewModel.changeContent(result)
+            viewModel.save()
+        }
+
+        viewModel.edited.observe(this) {
+            if (it.id == 0L) {
                 return@observe
             }
-            with(binding.content) {
-                requestFocus()
-                setText(post.content)
-            }
-        })
-
-        binding.save.setOnClickListener {
-            with(binding.content) {
-                if (text.isNullOrBlank()) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        context.getString(R.string.error_empty_content),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-
-                viewModel.changeContent(text.toString())
-                viewModel.save()
-
-                setText("")
-                clearFocus()
-                AndroidUtils.hideKeyboard(this)
-                binding.group.visibility = View.GONE
-            }
-        }
-
-        binding.content.setOnClickListener {
-            binding.group.visibility = View.VISIBLE
-        }
-
-        binding.cancel.setOnClickListener {
-            with(binding.content) {
-                setText("")
-                clearFocus()
-                AndroidUtils.hideKeyboard(this)
-                binding.group.visibility = View.GONE
-            }
+            editPostLauncher.launch(it.content)
         }
     }
 }
