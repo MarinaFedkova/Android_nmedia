@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.repository.PostRepositoryInMemoryImpl
 import java.text.DecimalFormat
 
 interface OnInterfactionListener {
