@@ -18,3 +18,5 @@
 03.04.2021 home work 9 «3.2 Организация навигации (перемещение между Activity)»
 
 04.04.2021 home work 10 «3.3 Хранение данных»
+
+07.04.2021 home work 11 «3.4 Fragments, FragmentManager»

@@ -3,7 +3,6 @@ package ru.netology.nmedia.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryFileImpl
@@ -40,10 +39,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun changeContent(content: String) {
-            val text = content.trim()
-            if (edited.value?.content == text) {
-                return
-            }
-            edited.value = edited.value?.copy(content = text)
+        val text = content.trim()
+        if (edited.value?.content == text) {
+            return
         }
+        edited.value = edited.value?.copy(content = text)
+    }
 }

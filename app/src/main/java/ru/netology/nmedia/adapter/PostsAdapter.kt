@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +20,7 @@ interface OnInterfactionListener {
     fun onRemove(post: Post) {}
     fun onRepost(post: Post) {}
     fun onVideo(post: Post) {}
+    fun onOpenPost(post: Post) {}
 }
 
 class PostsAdapter(
@@ -75,8 +78,12 @@ class PostViewHolder(
             video.setOnClickListener {
                 onInterfactionListener.onVideo(post)
             }
+            content.setOnClickListener {
+                onInterfactionListener.onOpenPost(post)
+            }
             like.text = displayNumbers(post.likes)
             repost.text = displayNumbers(post.reposts)
+
         }
     }
 
