@@ -17,6 +17,7 @@ import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
+import java.io.File
 
 class FragmentFeed : Fragment() {
     private val viewModel: PostViewModel by viewModels(
@@ -82,7 +83,12 @@ class FragmentFeed : Fragment() {
         })
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_fragmentFeed_to_newPostFragment)
+            findNavController().navigate(R.id.action_fragmentFeed_to_newPostFragment,
+                Bundle().apply
+                {
+                    val file = File(context?.filesDir, "savecontent.json")
+                    if (file.exists()) textArg = file.readText()
+                })
         }
 
         return binding.root

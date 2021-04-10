@@ -19,7 +19,8 @@
         style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        android:windowSoftInputMode="adjustResize"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/ok"

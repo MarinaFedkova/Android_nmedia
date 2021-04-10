@@ -20,3 +20,5 @@
 04.04.2021 home work 10 «3.3 Хранение данных»
 
 07.04.2021 home work 11 «3.4 Fragments, FragmentManager»
+
+10.04.2021 home work 12 «4.1 SQL и SQLite»
