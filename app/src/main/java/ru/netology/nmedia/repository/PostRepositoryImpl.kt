@@ -1,16 +1,17 @@
 package ru.netology.nmedia.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.map
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 
-class PostRepositorySQLiteImpl(
+class PostRepositoryImpl(
     private val dao: PostDao,
 ) : PostRepository {
 
-    override fun getAll(): LiveData<List<Post>> = dao.getAll().map {
+    override fun getAll() = Transformations.map( dao.getAll()) {
         it.map(PostEntity::toPost)
     }
 
