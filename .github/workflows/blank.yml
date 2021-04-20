@@ -14,10 +14,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         
-     - name: Decode google-services.json
-       env:
+      - name: Decode google-services.json
+        env:
            FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
-       run: echo $FIREBASE_SECRET > Android_nmedia/app/google-services.json
+        run: echo $FIREBASE_SECRET > Android_nmedia/app/google-services.json
 
 
       - name: Build
