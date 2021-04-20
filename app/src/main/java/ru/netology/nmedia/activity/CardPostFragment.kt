@@ -79,7 +79,8 @@ class CardPostFragment : Fragment() {
                         putExtra(Intent.EXTRA_TEXT, post.content)
                         type = "text/plane"
                     }
-                    val repostIntent = Intent.createChooser(intent, getString(R.string.chooser_repost))
+                    val repostIntent =
+                        Intent.createChooser(intent, getString(R.string.chooser_repost))
                     startActivity(repostIntent)
                 }
                 video.setOnClickListener {
