@@ -2,7 +2,9 @@ package ru.netology.nmedia.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
@@ -29,6 +31,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun repostById(id: Long) = repository.repostById(id)
     fun removeById(id: Long) = repository.removeById(id)
     fun video() = repository.video()
+
+    fun getPostById(id: Long): LiveData<Post?> = data.map { posts ->
+        posts.find {
+            it.id == id
+        }
+    }
 
     fun save() {
         edited.value?.let {

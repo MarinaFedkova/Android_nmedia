@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
-import ru.netology.nmedia.activity.CardPostFragment.Companion.postArg
+import ru.netology.nmedia.activity.CardPostFragment.Companion.postId
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInterfactionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -72,7 +72,7 @@ class FragmentFeed : Fragment() {
                 findNavController().navigate(R.id.action_fragmentFeed_to_cardPostFragment,
                     Bundle().apply
                     {
-                        postArg = post
+                        postId = post.id
                     })
             }
         })

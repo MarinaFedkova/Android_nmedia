@@ -1,5 +1,6 @@
 package ru.netology.nmedia.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,16 +11,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentCardPostBinding
-import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.util.PostArg
+import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 
 class CardPostFragment : Fragment() {
     companion object {
-        var Bundle.postArg: Post? by PostArg
-        var Bundle.textArg: String? by StringArg
+        var Bundle.postId by LongArg
     }
 
     private val viewModel: PostViewModel by viewModels(
@@ -33,14 +32,17 @@ class CardPostFragment : Fragment() {
     ): View? {
         val binding = FragmentCardPostBinding.inflate(inflater, container, false)
 
-        arguments?.postArg?.let {
+        val postId = requireArguments().postId ?: error("Post id is required")
+
+        viewModel.getPostById(postId).observe(viewLifecycleOwner) { post ->
+            post ?: return@observe
             binding.apply {
-                author.text = it.author
-                published.text = it.published
-                content.text = it.content
-                like.isChecked = it.likedByMe
-                like.text = "${it.likes}"
-                if (!it.videoUrl.isNullOrEmpty()) {
+                author.text = post.author
+                published.text = post.published
+                content.text = post.content
+                like.isChecked = post.likedByMe
+                like.text = "${post.likes}"
+                if (!post.videoUrl.isNullOrEmpty()) {
                     video.visibility = View.VISIBLE
                 } else video.visibility = View.GONE
                 menu.setOnClickListener { it ->
@@ -49,16 +51,18 @@ class CardPostFragment : Fragment() {
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
                                 R.id.remove -> {
+                                    viewModel.removeById(postId)
                                     findNavController().navigateUp()
                                     true
                                 }
                                 R.id.edit -> {
-                                    findNavController().navigate(R.id.editPostFragment,
-                                        Bundle().apply
-                                        {
-                                           //textArg = it.content
-
-                                        })
+                                    viewModel.edit(post)
+//                                    findNavController().navigate(R.id.editPostFragment,
+//                                        Bundle().apply
+//                                        {
+//                                           //textArg = it.content
+//
+//                                        })
                                     true
                                 }
                                 else -> false
@@ -66,20 +70,26 @@ class CardPostFragment : Fragment() {
                         }
                     }.show()
                 }
-//                like.setOnClickListener {
-//                    onInterfactionListener.onLike(it)
-//                }
-//                repost.setOnClickListener {
-//                    onInterfactionListener.onRepost(it)
-//                }
-//                video.setOnClickListener {
-//                    onInterfactionListener.onVideo(it)
-//                }
+                like.setOnClickListener {
+                    viewModel.likeById(postId)
+                }
+                repost.setOnClickListener {
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, post.content)
+                        type = "text/plane"
+                    }
+                    val repostIntent = Intent.createChooser(intent, getString(R.string.chooser_repost))
+                    startActivity(repostIntent)
+                }
+                video.setOnClickListener {
+                    viewModel.video()
+                }
 //                like.text = displayNumbers(it.likes)
 //                repost.text = displayNumbers(it.reposts)
-//            }
+            }
         }
-    }
+
 
         return binding.root
     }
