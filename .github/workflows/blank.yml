@@ -13,7 +13,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
+        
+      - name: Decode google-services.json
+        env:
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+        run: echo $FIREBASE_SECRET > app/google-services.json        
+      
       - name: Build
         run: |
           chmod +x ./gradlew
@@ -24,3 +29,5 @@ jobs:
         with:
           name: app-debug.apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          
+      
