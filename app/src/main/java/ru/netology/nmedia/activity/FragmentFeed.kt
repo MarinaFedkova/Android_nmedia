@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -28,7 +29,7 @@ class FragmentFeed : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
         val adapter = PostsAdapter(object : OnInterfactionListener {
@@ -53,7 +54,7 @@ class FragmentFeed : Fragment() {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, post.content)
-                    type = "text/plane"
+                    type = "text/plain"
                 }
                 val repostIntent = Intent.createChooser(intent, getString(R.string.chooser_repost))
                 startActivity(repostIntent)
@@ -78,9 +79,16 @@ class FragmentFeed : Fragment() {
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner, { posts ->
-            adapter.submitList(posts)
+        viewModel.data.observe(viewLifecycleOwner, { state ->
+            adapter.submitList(state.posts)
+            binding.progress.isVisible = state.loading
+            binding.errorGroupe.isVisible = state.error
+            binding.emptyText.isVisible = state.empty
         })
+
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
+        }
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_fragmentFeed_to_newPostFragment,
@@ -90,7 +98,6 @@ class FragmentFeed : Fragment() {
                     if (file.exists()) textArg = file.readText()
                 })
         }
-
         return binding.root
     }
 }

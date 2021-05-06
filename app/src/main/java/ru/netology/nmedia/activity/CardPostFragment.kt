@@ -2,17 +2,16 @@ package ru.netology.nmedia.activity
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentCardPostBinding
 import ru.netology.nmedia.util.LongArg
-import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 
@@ -34,7 +33,7 @@ class CardPostFragment : Fragment() {
 
         val postId = requireArguments().postId ?: error("Post id is required")
 
-        viewModel.getPostById(postId).observe(viewLifecycleOwner) { post ->
+       /* viewModel.getPostById(postId).observe(viewLifecycleOwner) { post ->
             post ?: return@observe
             binding.apply {
                 author.text = post.author
@@ -57,12 +56,6 @@ class CardPostFragment : Fragment() {
                                 }
                                 R.id.edit -> {
                                     viewModel.edit(post)
-//                                    findNavController().navigate(R.id.editPostFragment,
-//                                        Bundle().apply
-//                                        {
-//                                           //textArg = it.content
-//
-//                                        })
                                     true
                                 }
                                 else -> false
@@ -89,8 +82,7 @@ class CardPostFragment : Fragment() {
 //                like.text = displayNumbers(it.likes)
 //                repost.text = displayNumbers(it.reposts)
             }
-        }
-
+        }*/
 
         return binding.root
     }

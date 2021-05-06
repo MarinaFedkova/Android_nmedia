@@ -20,4 +20,7 @@
     <string name="channel_remote_name">Server notifications</string>
     <string name="channel_remote_description">Notifications from remote server</string>
     <string name="notification_new_post">%1$s published a new post:\n\n %2$s</string>
+    <string name="error_loading">Loading error</string>
+    <string name="retry_loading">Retry</string>
+    <string name="empty_posts">No posts yet</string>
 </resources>

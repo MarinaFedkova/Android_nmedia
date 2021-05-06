@@ -1,8 +1,6 @@
 package ru.netology.nmedia.activity
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +13,6 @@ import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
-import java.io.File
 
 class NewPostFragment : Fragment() {
     companion object {
@@ -41,6 +38,9 @@ class NewPostFragment : Fragment() {
             viewModel.save()
             savecontent("")
             AndroidUtils.hideKeyboard(requireView())
+        }
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
             findNavController().navigateUp()
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {

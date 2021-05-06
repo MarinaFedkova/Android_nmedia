@@ -62,4 +62,4 @@ captures/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### Firebase ###
-google-services.json
+*google-services.json
