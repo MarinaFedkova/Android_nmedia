@@ -38,6 +38,21 @@ class PostRepositoryImpl : PostRepository {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts/{id}/likes")
             .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
+    }
+
+    override fun dislikeById(id: Long) {
+        val request: Request = Request.Builder()
+            .delete()
+            .url("${BASE_URL}/api/slow/posts/{id}/likes")
+            .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
     }
 
     override fun repostById(id: Long) {

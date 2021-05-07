@@ -98,6 +98,12 @@ class FragmentFeed : Fragment() {
                     if (file.exists()) textArg = file.readText()
                 })
         }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadPosts()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+
         return binding.root
     }
 }

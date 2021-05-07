@@ -79,8 +79,8 @@ class CardPostFragment : Fragment() {
                 video.setOnClickListener {
                     viewModel.video()
                 }
-//                like.text = displayNumbers(it.likes)
-//                repost.text = displayNumbers(it.reposts)
+//                like.text = displayNumbers(post.likes)
+//                repost.text = displayNumbers(post.reposts)
             }
         }*/
 
