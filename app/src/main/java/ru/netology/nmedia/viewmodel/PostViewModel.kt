@@ -50,15 +50,26 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(id: Long) {
-        thread { repository.likeById(id) }
+        thread {
+            val old = _data.value?.posts.orEmpty()
+            try {
+                if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
+                    repository.likeById(id)
+                } else repository.dislikeById(id)
+            } catch (e: IOException) {
+                _data.postValue(_data.value?.copy(posts = old))
+            }
+            loadPosts()
+        }
     }
 
     fun removeById(id: Long) {
         thread {
             val old = _data.value?.posts.orEmpty()
+            val posts = _data.value?.posts.orEmpty()
+                .filter { it.id != id }
             _data.postValue(
-                _data.value?.copy(posts = _data.value?.posts.orEmpty()
-                    .filter { it.id != id })
+                _data.value?.copy(posts = posts, empty = posts.isEmpty())
             )
             try {
                 repository.removeById(id)

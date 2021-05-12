@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
+import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentCardPostBinding
 import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -33,8 +34,8 @@ class CardPostFragment : Fragment() {
 
         val postId = requireArguments().postId ?: error("Post id is required")
 
-       /* viewModel.getPostById(postId).observe(viewLifecycleOwner) { post ->
-            post ?: return@observe
+      viewModel.getPostById(postId).let { post ->
+           // post ?: return@observe
             binding.apply {
                 author.text = post.author
                 published.text = post.published
@@ -79,10 +80,10 @@ class CardPostFragment : Fragment() {
                 video.setOnClickListener {
                     viewModel.video()
                 }
-//                like.text = displayNumbers(post.likes)
-//                repost.text = displayNumbers(post.reposts)
+             //  like.text = displayNumbers(post.likes)
+            //   repost.text = displayNumbers(post.reposts)
             }
-        }*/
+        }
 
         return binding.root
     }
