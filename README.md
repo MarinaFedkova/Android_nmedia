@@ -28,3 +28,5 @@
 20.04.2021 home work 14 «4.3 Notifications & Pushes»
 
 07.05.2021 home work 1 «1.2. Сетевые запросы: Main Thread & Background»
+
+14.05.2021 home work 3 «2.2 Современные подходы работы с многопоточностью»
