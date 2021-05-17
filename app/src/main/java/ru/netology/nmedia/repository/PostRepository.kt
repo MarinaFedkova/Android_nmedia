@@ -11,8 +11,8 @@ interface PostRepository {
     fun save(post: Post)
     fun video()
     fun getPostById(id: Long): Post
-    fun getAllAsync(callback: GetAllCallback)
 
+    fun getAllAsync(callback: GetAllCallback)
     fun likeByIdAsync(id: Long, callback: ByIdCallBack)
     fun dislikeByIdAsync(id: Long, callback: ByIdCallBack)
     fun removeByIdAsync(id: Long, callback: ByIdCallBack)
@@ -24,7 +24,7 @@ interface PostRepository {
     }
 
     interface ByIdCallBack {
-        fun onSuccess() {}
+        fun onSuccess(id: Long) {}
         fun onError(e: Exception) {}
     }
 

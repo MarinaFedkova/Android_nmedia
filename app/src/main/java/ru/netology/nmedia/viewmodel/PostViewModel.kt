@@ -9,8 +9,6 @@ import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
-import java.io.IOException
-import kotlin.concurrent.thread
 
 private val empty = Post(
     id = 0,
@@ -54,28 +52,28 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         val old = _data.value?.posts.orEmpty()
             if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
                 repository.likeByIdAsync(id, object : PostRepository.ByIdCallBack {
-                    override fun onSuccess() {
-                        _postCreated.postValue(Unit)
+                    override fun onSuccess(id: Long) {
+                        //_postCreated.postValue(Unit)
                     }
                     override fun onError(e: Exception) {
                         _data.postValue(_data.value?.copy(posts = old))
                     }
                 })
             } else repository.dislikeByIdAsync(id, object : PostRepository.ByIdCallBack {
-                override fun onSuccess() {
-                    _postCreated.postValue(Unit)
+                override fun onSuccess(id: Long) {
+                    //_postCreated.postValue(Unit)
                 }
                 override fun onError(e: Exception) {
                     _data.postValue(_data.value?.copy(posts = old))
                 }
             })
-        loadPosts()
+       //loadPosts()
     }
 
     fun removeById(id: Long) {
             val old = _data.value?.posts.orEmpty()
         repository.removeByIdAsync(id, object : PostRepository.ByIdCallBack {
-            override fun onSuccess() {
+            override fun onSuccess(id: Long) {
                     val posts = _data.value?.posts.orEmpty()
                         .filter { it.id != id }
                     _data.postValue(
@@ -86,6 +84,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _data.postValue(_data.value?.copy(posts = old))
             }
         })
+        loadPosts()
     }
 
     fun repostById(id: Long) = repository.repostById(id)
@@ -96,6 +95,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value?.let {
             repository.saveAsync(it, object : PostRepository.SaveCallBack {
                 override fun onSuccess(post: Post) {
+                    _data.postValue(_data.value?.posts?.let {
+                        FeedModel(posts = it.plus(post), empty = it.isEmpty())
+                    })
                     _postCreated.postValue(Unit)
                 }
                 override fun onError(e: Exception) {
