@@ -51,29 +51,28 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun likeById(id: Long) {
         val old = _data.value?.posts.orEmpty()
             if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
-                repository.likeByIdAsync(id, object : PostRepository.ByIdCallBack {
-                    override fun onSuccess(id: Long) {
-                        //_postCreated.postValue(Unit)
+                repository.likeByIdAsync(id, object : PostRepository.SaveCallBack {
+                    override fun onSuccess(post: Post) {
+                        _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map { if (it.id == post.id) post else it }))
                     }
                     override fun onError(e: Exception) {
                         _data.postValue(_data.value?.copy(posts = old))
                     }
                 })
-            } else repository.dislikeByIdAsync(id, object : PostRepository.ByIdCallBack {
-                override fun onSuccess(id: Long) {
-                    //_postCreated.postValue(Unit)
+            } else repository.dislikeByIdAsync(id, object : PostRepository.SaveCallBack {
+                override fun onSuccess(post: Post) {
+                    _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map { if (it.id == post.id) post else it }))
                 }
                 override fun onError(e: Exception) {
                     _data.postValue(_data.value?.copy(posts = old))
                 }
             })
-       //loadPosts()
     }
 
     fun removeById(id: Long) {
             val old = _data.value?.posts.orEmpty()
         repository.removeByIdAsync(id, object : PostRepository.ByIdCallBack {
-            override fun onSuccess(id: Long) {
+            override fun onSuccess() {
                     val posts = _data.value?.posts.orEmpty()
                         .filter { it.id != id }
                     _data.postValue(
@@ -84,7 +83,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _data.postValue(_data.value?.copy(posts = old))
             }
         })
-        loadPosts()
     }
 
     fun repostById(id: Long) = repository.repostById(id)

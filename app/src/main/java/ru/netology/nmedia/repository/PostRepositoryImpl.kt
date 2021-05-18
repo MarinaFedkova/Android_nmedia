@@ -67,7 +67,7 @@ class PostRepositoryImpl : PostRepository {
             .close()
     }
 
-    override fun likeByIdAsync(id: Long, callback: PostRepository.ByIdCallBack) {
+    override fun likeByIdAsync(id: Long, callback: PostRepository.SaveCallBack) {
         val request: Request = Request.Builder()
             .post(gson.toJson(id).toRequestBody(jsonType))
             .url("${BASE_URL}/api/slow/posts/${id}/likes")
@@ -78,7 +78,7 @@ class PostRepositoryImpl : PostRepository {
                 override fun onResponse(call: Call, response: Response) {
                     val body = response.body?.string() ?: throw RuntimeException("body is null")
                     try {
-                        callback.onSuccess(gson.fromJson(body, Long::class.java))
+                        callback.onSuccess(gson.fromJson(body, Post::class.java))
                     } catch (e: Exception) {
                         callback.onError(e)
                     }
@@ -101,7 +101,7 @@ class PostRepositoryImpl : PostRepository {
             .close()
     }
 
-    override fun dislikeByIdAsync(id: Long, callback: PostRepository.ByIdCallBack) {
+    override fun dislikeByIdAsync(id: Long, callback: PostRepository.SaveCallBack) {
         val request: Request = Request.Builder()
             .delete(gson.toJson(id).toRequestBody(jsonType))
             .url("${BASE_URL}/api/slow/posts/${id}/likes")
@@ -112,7 +112,7 @@ class PostRepositoryImpl : PostRepository {
                 override fun onResponse(call: Call, response: Response) {
                     val body = response.body?.string() ?: throw RuntimeException("body is null")
                     try {
-                        callback.onSuccess(gson.fromJson(body, Long::class.java))
+                        callback.onSuccess(gson.fromJson(body, Post::class.java))
                     } catch (e: Exception) {
                         callback.onError(e)
                     }
@@ -150,7 +150,7 @@ class PostRepositoryImpl : PostRepository {
                 override fun onResponse(call: Call, response: Response) {
                     val body = response.body?.string() ?: throw RuntimeException("body is null")
                     try {
-                        callback.onSuccess(gson.fromJson(body, Long::class.java))
+                        callback.onSuccess()
                     } catch (e: Exception) {
                         callback.onError(e)
                     }
