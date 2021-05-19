@@ -13,6 +13,7 @@ import ru.netology.nmedia.util.SingleLiveEvent
 private val empty = Post(
     id = 0,
     author = "",
+    authorAvatar = "",
     content = "",
     published = "",
     likedByMe = false,
@@ -70,7 +71,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
-            val old = _data.value?.posts.orEmpty()
         repository.removeByIdAsync(id, object : PostRepository.ByIdCallBack {
             override fun onSuccess() {
                     val posts = _data.value?.posts.orEmpty()
@@ -80,7 +80,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     )
             }
             override fun onError(e: Exception) {
-                _data.postValue(_data.value?.copy(posts = old))
+                _data.postValue(FeedModel(error = true))
             }
         })
     }

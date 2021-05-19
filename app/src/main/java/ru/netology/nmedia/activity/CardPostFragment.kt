@@ -9,6 +9,8 @@ import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentCardPostBinding
@@ -34,10 +36,19 @@ class CardPostFragment : Fragment() {
 
         val postId = requireArguments().postId ?: error("Post id is required")
 
-      viewModel.getPostById(postId).let { post ->
-           // post ?: return@observe
+        viewModel.getPostById(postId).let { post ->
+            // post ?: return@observe
             binding.apply {
                 author.text = post.author
+                val url = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+
+                Glide.with(avatar)
+                    .load(url)
+                    .timeout(10_000)
+                    .transform(CircleCrop())
+                    .placeholder(R.drawable.ic_baseline_loading_24)
+                    .error(R.drawable.ic_baseline_error_24)
+                    .into(avatar)
                 published.text = post.published
                 content.text = post.content
                 like.isChecked = post.likedByMe
@@ -45,25 +56,28 @@ class CardPostFragment : Fragment() {
                 if (!post.videoUrl.isNullOrEmpty()) {
                     video.visibility = View.VISIBLE
                 } else video.visibility = View.GONE
-                menu.setOnClickListener { it ->
-                    PopupMenu(it.context, it).apply {
-                        inflate(R.menu.options_post)
-                        setOnMenuItemClickListener { item ->
-                            when (item.itemId) {
-                                R.id.remove -> {
-                                    viewModel.removeById(postId)
-                                    findNavController().navigateUp()
-                                    true
+                /*if (post.attachment != null) {
+                    attachment.visibility = View.VISIBLE
+                } else attachment.visibility = View.GONE*/
+                    menu.setOnClickListener { it ->
+                        PopupMenu(it.context, it).apply {
+                            inflate(R.menu.options_post)
+                            setOnMenuItemClickListener { item ->
+                                when (item.itemId) {
+                                    R.id.remove -> {
+                                        viewModel.removeById(postId)
+                                        findNavController().navigateUp()
+                                        true
+                                    }
+                                    R.id.edit -> {
+                                        viewModel.edit(post)
+                                        true
+                                    }
+                                    else -> false
                                 }
-                                R.id.edit -> {
-                                    viewModel.edit(post)
-                                    true
-                                }
-                                else -> false
                             }
-                        }
-                    }.show()
-                }
+                        }.show()
+                    }
                 like.setOnClickListener {
                     viewModel.likeById(postId)
                 }
@@ -80,8 +94,8 @@ class CardPostFragment : Fragment() {
                 video.setOnClickListener {
                     viewModel.video()
                 }
-             //  like.text = displayNumbers(post.likes)
-            //   repost.text = displayNumbers(post.reposts)
+                //  like.text = displayNumbers(post.likes)
+                //   repost.text = displayNumbers(post.reposts)
             }
         }
 

@@ -7,8 +7,11 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
 import java.text.DecimalFormat
 
@@ -43,12 +46,33 @@ class PostViewHolder(
         binding.apply {
             author.text = post.author
             published.text = post.published
+            val urlaAatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+
+            Glide.with(avatar)
+                .load(urlaAatar)
+                .timeout(10_000)
+                .transform(CircleCrop())
+                .placeholder(R.drawable.ic_baseline_loading_24)
+                .error(R.drawable.ic_baseline_error_24)
+                .into(avatar)
+
             content.text = post.content
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"
             if (!post.videoUrl.isNullOrEmpty()) {
                 video.visibility = View.VISIBLE
             } else video.visibility = View.GONE
+
+           /* if (post.attachment != null) {
+                attachment.visibility = View.VISIBLE
+                val urlAttachment = "http://10.0.2.2:9999/images/${post.attachment}"
+                Glide.with(attachmet)
+                    .load(urlAttachment)
+                    .timeout(10_000)
+                    .placeholder(R.drawable.ic_baseline_loading_24)
+                    .error(R.drawable.ic_baseline_error_24)
+                    .into(attachment)
+            } else attachment.visibility = View.GONE*/
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
