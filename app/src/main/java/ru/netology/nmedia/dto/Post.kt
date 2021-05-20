@@ -2,6 +2,7 @@ package ru.netology.nmedia.dto
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 @Parcelize
 data class Post (
@@ -14,5 +15,5 @@ data class Post (
     val likes: Long,
     val reposts: Long,
     val videoUrl: String?,
-    //val attachment: AttachmentType?
+    val attachment: @RawValue Attachment?
 ): Parcelable
