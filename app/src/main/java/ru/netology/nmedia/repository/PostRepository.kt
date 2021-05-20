@@ -3,20 +3,15 @@ package ru.netology.nmedia.repository
 import ru.netology.nmedia.dto.Post
 
 interface PostRepository {
-    fun getAll(): List<Post>
-    fun likeById(id: Long)
-    fun dislikeById(id: Long)
     fun repostById(id: Long)
-    fun removeById(id: Long)
-    fun save(post: Post)
     fun video()
-    fun getPostById(id: Long): Post
 
-    fun getAllAsync(callback: GetAllCallback)
-    fun likeByIdAsync(id: Long, callback: SaveCallBack)
-    fun dislikeByIdAsync(id: Long, callback: SaveCallBack)
-    fun removeByIdAsync(id: Long, callback: ByIdCallBack)
-    fun saveAsync(post: Post, callback: SaveCallBack)
+    fun getAll(callback: GetAllCallback)
+    fun getPostById(id: Long, callback: PostCallBack)
+    fun likeById(id: Long, callback: PostCallBack)
+    fun dislikeById(id: Long, callback: PostCallBack)
+    fun removeById(id: Long, callback: ByIdCallBack)
+    fun save(post: Post, callback: PostCallBack)
 
     interface GetAllCallback {
         fun onSuccess(posts: List<Post>) {}
@@ -28,7 +23,7 @@ interface PostRepository {
         fun onError(e: Exception) {}
     }
 
-    interface SaveCallBack {
+    interface PostCallBack {
         fun onSuccess(post: Post) {}
         fun onError(e: Exception) {}
     }

@@ -19,7 +19,8 @@ private val empty = Post(
     likedByMe = false,
     likes = 0,
     reposts = 0,
-    videoUrl = ""
+    videoUrl = "",
+    attachment = null
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -38,7 +39,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadPosts() {
             _data.value = FeedModel(loading = true)
-        repository.getAllAsync(object : PostRepository.GetAllCallback {
+        repository.getAll(object : PostRepository.GetAllCallback {
             override fun onSuccess(posts: List<Post>) {
                 _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }
@@ -48,11 +49,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         })
     }
+    fun getPostById(id: Long) {
+        
+    }
 
     fun likeById(id: Long) {
         val old = _data.value?.posts.orEmpty()
             if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
-                repository.likeByIdAsync(id, object : PostRepository.SaveCallBack {
+                repository.likeById(id, object : PostRepository.PostCallBack {
                     override fun onSuccess(post: Post) {
                         _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map { if (it.id == post.id) post else it }))
                     }
@@ -60,7 +64,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                         _data.postValue(_data.value?.copy(posts = old))
                     }
                 })
-            } else repository.dislikeByIdAsync(id, object : PostRepository.SaveCallBack {
+            } else repository.dislikeById(id, object : PostRepository.PostCallBack {
                 override fun onSuccess(post: Post) {
                     _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map { if (it.id == post.id) post else it }))
                 }
@@ -71,7 +75,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
-        repository.removeByIdAsync(id, object : PostRepository.ByIdCallBack {
+        repository.removeById(id, object : PostRepository.ByIdCallBack {
             override fun onSuccess() {
                     val posts = _data.value?.posts.orEmpty()
                         .filter { it.id != id }
@@ -87,11 +91,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun repostById(id: Long) = repository.repostById(id)
     fun video() = repository.video()
-    fun getPostById(id: Long): Post = repository.getPostById(id)
+
 
     fun save() {
         edited.value?.let {
-            repository.saveAsync(it, object : PostRepository.SaveCallBack {
+            repository.save(it, object : PostRepository.PostCallBack {
                 override fun onSuccess(post: Post) {
                     _data.postValue(_data.value?.posts?.let {
                         FeedModel(posts = it.plus(post), empty = it.isEmpty())

@@ -23,4 +23,5 @@
     <string name="error_loading">Ошибка загрузки</string>
     <string name="retry_loading">Повторить</string>
     <string name="empty_posts">Постов пока нет</string>
+    <string name="attachment">Вложение</string>
 </resources>
