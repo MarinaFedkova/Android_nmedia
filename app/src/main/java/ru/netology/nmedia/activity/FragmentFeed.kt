@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.CardPostFragment.Companion.postId
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
@@ -84,6 +85,10 @@ class FragmentFeed : Fragment() {
             binding.progress.isVisible = state.loading
             binding.errorGroupe.isVisible = state.error
             binding.emptyText.isVisible = state.empty
+        })
+
+        viewModel.networkError.observe(viewLifecycleOwner, {
+            Snackbar.make(requireView(), "${resources.getString(R.string.network_error)} $it", Snackbar.LENGTH_LONG).show()
         })
 
         binding.retryButton.setOnClickListener {

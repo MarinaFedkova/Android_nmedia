@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentEditPostBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
@@ -32,6 +34,11 @@ class EditPostFragment : Fragment() {
             AndroidUtils.hideKeyboard(requireView())
             findNavController().navigateUp()
         }
+
+//        viewModel.networkError.observe(viewLifecycleOwner, {
+//            Snackbar.make(requireView(), "${resources.getString(R.string.network_error)} $it", Snackbar.LENGTH_LONG).show()
+//        })
+
         return binding.root
     }
 }

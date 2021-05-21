@@ -24,4 +24,5 @@
     <string name="retry_loading">Повторить</string>
     <string name="empty_posts">Постов пока нет</string>
     <string name="attachment">Вложение</string>
+    <string name="network_error">Сетевая ошибка:</string>
 </resources>

@@ -32,16 +32,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+    private val _networkError = SingleLiveEvent<String>()
+    val networkError: LiveData<String>
+        get() = _networkError
 
     init {
         loadPosts()
     }
 
     fun loadPosts() {
-            _data.value = FeedModel(loading = true)
-        repository.getAll(object : PostRepository.GetAllCallback {
-            override fun onSuccess(posts: List<Post>) {
-                _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+        _data.value = FeedModel(loading = true)
+        repository.getAll(object : PostRepository.Callback<List<Post>> {
+            override fun onSuccess(value: List<Post>) {
+                _data.postValue(FeedModel(posts = value, empty = value.isEmpty()))
             }
 
             override fun onError(e: Exception) {
@@ -49,42 +52,53 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         })
     }
+
     fun getPostById(id: Long) {
-        
+
     }
 
     fun likeById(id: Long) {
-        val old = _data.value?.posts.orEmpty()
-            if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
-                repository.likeById(id, object : PostRepository.PostCallBack {
-                    override fun onSuccess(post: Post) {
-                        _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map { if (it.id == post.id) post else it }))
-                    }
-                    override fun onError(e: Exception) {
-                        _data.postValue(_data.value?.copy(posts = old))
-                    }
-                })
-            } else repository.dislikeById(id, object : PostRepository.PostCallBack {
-                override fun onSuccess(post: Post) {
-                    _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty().map { if (it.id == post.id) post else it }))
+        if (_data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
+            repository.likeById(id, object : PostRepository.Callback<Post> {
+                override fun onSuccess(value: Post) {
+                    _data.postValue(
+                        FeedModel(
+                            posts = _data.value?.posts.orEmpty()
+                                .map { if (it.id == value.id) value else it })
+                    )
                 }
+
                 override fun onError(e: Exception) {
-                    _data.postValue(_data.value?.copy(posts = old))
+                    _networkError.value = e.message
                 }
             })
+        } else repository.dislikeById(id, object : PostRepository.Callback<Post> {
+            override fun onSuccess(value: Post) {
+                _data.postValue(
+                    FeedModel(
+                        posts = _data.value?.posts.orEmpty()
+                            .map { if (it.id == value.id) value else it })
+                )
+            }
+
+            override fun onError(e: Exception) {
+                _networkError.value = e.message
+            }
+        })
     }
 
     fun removeById(id: Long) {
-        repository.removeById(id, object : PostRepository.ByIdCallBack {
-            override fun onSuccess() {
-                    val posts = _data.value?.posts.orEmpty()
-                        .filter { it.id != id }
-                    _data.postValue(
-                        _data.value?.copy(posts = posts, empty = posts.isEmpty())
-                    )
+        repository.removeById(id, object : PostRepository.Callback<Unit> {
+            override fun onSuccess(value: Unit) {
+                val posts = _data.value?.posts.orEmpty()
+                    .filter { it.id != id }
+                _data.postValue(
+                    _data.value?.copy(posts = posts, empty = posts.isEmpty())
+                )
             }
+
             override fun onError(e: Exception) {
-                _data.postValue(FeedModel(error = true))
+                _networkError.value = e.message
             }
         })
     }
@@ -95,15 +109,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun save() {
         edited.value?.let {
-            repository.save(it, object : PostRepository.PostCallBack {
-                override fun onSuccess(post: Post) {
-                    _data.postValue(_data.value?.posts?.let {
-                        FeedModel(posts = it.plus(post), empty = it.isEmpty())
-                    })
-                    _postCreated.postValue(Unit)
+            repository.save(it, object : PostRepository.Callback<Post> {
+                override fun onSuccess(value: Post) {
+//                    _data.postValue(_data.value?.posts?.let {
+//                        FeedModel(posts = it.plus(value), empty = it.isEmpty())
+//                    })
+                    loadPosts()
+                    _postCreated.value = Unit
                 }
+
                 override fun onError(e: Exception) {
-                    edited.value
+                    _networkError.value = e.message
+                     //edited.value
                 }
             })
         }

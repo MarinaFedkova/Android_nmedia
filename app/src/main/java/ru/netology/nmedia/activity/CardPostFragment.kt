@@ -10,9 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.netology.nmedia.R
-import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentCardPostBinding
 import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -37,8 +35,8 @@ class CardPostFragment : Fragment() {
         val postId = requireArguments().postId ?: error("Post id is required")
 
         viewModel.getPostById(postId).let { post ->
-            binding.apply {
-                author.text = post.author
+           binding.apply {
+                /*author.text = post.author
 
                 val url = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
                 Glide.with(avatar)
@@ -105,7 +103,7 @@ class CardPostFragment : Fragment() {
                 }
                 //  like.text = displayNumbers(post.likes)
                 //   repost.text = displayNumbers(post.reposts)
-            }
+            */}
         }
 
         return binding.root

@@ -6,25 +6,15 @@ interface PostRepository {
     fun repostById(id: Long)
     fun video()
 
-    fun getAll(callback: GetAllCallback)
-    fun getPostById(id: Long, callback: PostCallBack)
-    fun likeById(id: Long, callback: PostCallBack)
-    fun dislikeById(id: Long, callback: PostCallBack)
-    fun removeById(id: Long, callback: ByIdCallBack)
-    fun save(post: Post, callback: PostCallBack)
+    fun getAll(callback: Callback<List<Post>>)
+    fun getPostById(id: Long, callback: Callback<Post>)
+    fun likeById(id: Long, callback: Callback<Post>)
+    fun dislikeById(id: Long, callback: Callback<Post>)
+    fun removeById(id: Long, callback: Callback<Unit>)
+    fun save(post: Post, callback: Callback<Post>)
 
-    interface GetAllCallback {
-        fun onSuccess(posts: List<Post>) {}
-        fun onError(e: Exception) {}
-    }
-
-    interface ByIdCallBack {
-        fun onSuccess() {}
-        fun onError(e: Exception) {}
-    }
-
-    interface PostCallBack {
-        fun onSuccess(post: Post) {}
+    interface Callback<T> {
+        fun onSuccess(value: T) {}
         fun onError(e: Exception) {}
     }
 }

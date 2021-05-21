@@ -39,10 +39,7 @@ class FCMService : FirebaseMessagingService() {
             when (Action.values().find { it.name == action }) {
                 Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
                 Action.NEW_POST -> handleNewPost(
-                    gson.fromJson(
-                        message.data[content],
-                        NewPost::class.java
-                    )
+                    gson.fromJson(message.data[content], NewPost::class.java)
                 )
             }
         }
