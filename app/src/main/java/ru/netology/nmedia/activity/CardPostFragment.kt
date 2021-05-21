@@ -34,9 +34,9 @@ class CardPostFragment : Fragment() {
 
         val postId = requireArguments().postId ?: error("Post id is required")
 
-        viewModel.getPostById(postId).let { post ->
+        viewModel.getPostById(postId).let { /*post ->
            binding.apply {
-                /*author.text = post.author
+                author.text = post.author
 
                 val url = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
                 Glide.with(avatar)
@@ -103,8 +103,8 @@ class CardPostFragment : Fragment() {
                 }
                 //  like.text = displayNumbers(post.likes)
                 //   repost.text = displayNumbers(post.reposts)
-            */}
-        }
+            }
+       */ }
 
         return binding.root
     }
