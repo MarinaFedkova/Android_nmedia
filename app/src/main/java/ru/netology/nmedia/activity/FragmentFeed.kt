@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
+import ru.netology.nmedia.R.id.action_fragmentFeed_to_editPostFragment
 import ru.netology.nmedia.activity.CardPostFragment.Companion.postId
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInterfactionListener
@@ -35,7 +36,8 @@ class FragmentFeed : Fragment() {
 
         val adapter = PostsAdapter(object : OnInterfactionListener {
             override fun onEdit(post: Post) {
-                findNavController().navigate(R.id.action_fragmentFeed_to_editPostFragment,
+                findNavController().navigate(
+                    action_fragmentFeed_to_editPostFragment,
                     Bundle().apply
                     {
                         textArg = post.content
@@ -59,15 +61,15 @@ class FragmentFeed : Fragment() {
                 }
                 val repostIntent = Intent.createChooser(intent, getString(R.string.chooser_repost))
                 startActivity(repostIntent)
-                viewModel.repostById(post.id)
+                //viewModel.repostById(post.id)
             }
 
             override fun onVideo(post: Post) {
-                post.videoUrl?.let { viewModel.video() }
-                if (!post.videoUrl.isNullOrEmpty()) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
-                    startActivity(intent)
-                }
+//                post.videoUrl?.let { viewModel.video() }
+//                if (!post.videoUrl.isNullOrEmpty()) {
+//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
+//                    startActivity(intent)
+//                }
             }
 
             override fun onOpenPost(post: Post) {
@@ -80,20 +82,28 @@ class FragmentFeed : Fragment() {
         })
 
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner, { state ->
-            adapter.submitList(state.posts)
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
-            binding.errorGroupe.isVisible = state.error
-            binding.emptyText.isVisible = state.empty
-        })
-
-        viewModel.networkError.observe(viewLifecycleOwner, {
-            Snackbar.make(requireView(), "${resources.getString(R.string.network_error)} $it", Snackbar.LENGTH_LONG).show()
-        })
-
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
+            binding.swipeRefreshLayout.isRefreshing = state.refresh
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                    .show()
+            }
         }
+
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.emptyText.isVisible = state.empty
+        }
+
+//        viewModel.networkError.observe(viewLifecycleOwner, {
+//            Snackbar.make(requireView(), "${resources.getString(R.string.network_error)} $it", Snackbar.LENGTH_LONG).show()
+//        })
+
+//        binding.retryButton.setOnClickListener {
+//            viewModel.loadPosts()
+//        }
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_fragmentFeed_to_newPostFragment,
@@ -105,8 +115,8 @@ class FragmentFeed : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadPosts()
-            binding.swipeRefreshLayout.isRefreshing = false
+            viewModel.refreshPosts()
+            //binding.swipeRefreshLayout.isRefreshing = false
         }
 
         return binding.root

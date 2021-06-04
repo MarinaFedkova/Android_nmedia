@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -45,9 +44,9 @@ class NewPostFragment : Fragment() {
         viewModel.postCreated.observe(viewLifecycleOwner) {
             findNavController().navigateUp()
         }
-        viewModel.networkError.observe(viewLifecycleOwner, {
-            Snackbar.make(requireView(), "${resources.getString(R.string.network_error)} $it", Snackbar.LENGTH_LONG).show()
-        })
+//        viewModel.networkError.observe(viewLifecycleOwner, {
+//            Snackbar.make(requireView(), "${resources.getString(R.string.network_error)} $it", Snackbar.LENGTH_LONG).show()
+//        })
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             val content = binding.edit.text.toString()

@@ -34,3 +34,5 @@
 20.05.2021 home work 4 «2.4 Многопоточность в Android»
 
 21.05.2021 home work 5 «2.4 Retrofit (CRUD)»
+
+04.06.2021 home work 8 «3.3 Coroutines в Android» Задача remove & likes

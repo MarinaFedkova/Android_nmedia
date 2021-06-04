@@ -24,5 +24,6 @@
     <string name="retry_loading">Retry</string>
     <string name="empty_posts">No posts yet</string>
     <string name="attachment">Attachment</string>
-    <string name="network_error">Network error:</string>
+    <string name="network_error">Network error</string>
+    <string name="error_unknown">Unknown error</string>
 </resources>

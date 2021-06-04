@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.view.loadCircleCrop
 import java.text.DecimalFormat
 
 interface OnInterfactionListener {
@@ -41,19 +42,21 @@ class PostViewHolder(
     private val binding: PostCardBinding,
     private val onInterfactionListener: OnInterfactionListener
 ) : RecyclerView.ViewHolder(binding.root) {
+
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
             published.text = post.published
-            val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
-
-            Glide.with(avatar)
-                .load(urlAvatar)
-                .timeout(10_000)
-                .circleCrop()
-                .placeholder(R.drawable.ic_baseline_loading_24)
-                .error(R.drawable.ic_baseline_error_24)
-                .into(avatar)
+            avatar.loadCircleCrop("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
+//            val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+//
+//            Glide.with(avatar)
+//                .load(urlAvatar)
+//                .timeout(10_000)
+//                .circleCrop()
+//                .placeholder(R.drawable.ic_baseline_loading_24)
+//                .error(R.drawable.ic_baseline_error_24)
+//                .into(avatar)
 
             content.text = post.content
             like.isChecked = post.likedByMe
@@ -62,16 +65,16 @@ class PostViewHolder(
                 video.visibility = View.VISIBLE
             } else video.visibility = View.GONE
 
-            if (post.attachment != null) {
+            /*if (post.attachment != null) {
                 attachmentView.visibility = View.VISIBLE
-                val urlAttachment = "http://10.0.2.2:9999/images/${post.attachment?.url}"
+                val urlAttachment = "http://10.0.2.2:9999/images/${post.attachment.url}"
                 Glide.with(attachmentView)
                     .load(urlAttachment)
                     .timeout(10_000)
                     .placeholder(R.drawable.ic_baseline_loading_24)
                     .error(R.drawable.ic_baseline_error_24)
                     .into(attachmentView)
-            } else attachmentView.visibility = View.GONE
+            } else attachmentView.visibility = View.GONE*/
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
