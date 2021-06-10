@@ -14,7 +14,6 @@
         <item name="iconTint">@color/like_checkbox_tint</item>
         <item name="android:minWidth">@dimen/icon_button_min_size</item>
         <item name="android:minHeight">@dimen/icon_button_min_size</item>
-
     </style>
 
     <style name="Widget.AppTheme.RepostButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
@@ -33,5 +32,16 @@
         <item name="android:minWidth">@dimen/icon_button_min_size</item>
         <item name="android:minHeight">@dimen/icon_button_min_size</item>
         <item name="android:colorBackground">?attr/colorControlNormal</item>
+    </style>
+
+    <style name="Widget.AppTheme.NewerButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="backgroundTint">@color/newerposts</item>
+        <item name="android:textColor">@color/newerpoststext</item>
+        <item name="iconTint">@color/newerpoststext</item>
+        <item name="cornerRadius">@dimen/common_spacing</item>
+        <item name="android:minWidth">@dimen/icon_button_min_size</item>
+        <item name="android:minHeight">@dimen/icon_button_min_size</item>
+        <item name="textAllCaps">false</item>
+
     </style>
 </resources>

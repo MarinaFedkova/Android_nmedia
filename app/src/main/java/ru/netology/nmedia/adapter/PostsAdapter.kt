@@ -48,16 +48,6 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             avatar.loadCircleCrop("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
-//            val urlAvatar = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
-//
-//            Glide.with(avatar)
-//                .load(urlAvatar)
-//                .timeout(10_000)
-//                .circleCrop()
-//                .placeholder(R.drawable.ic_baseline_loading_24)
-//                .error(R.drawable.ic_baseline_error_24)
-//                .into(avatar)
-
             content.text = post.content
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"

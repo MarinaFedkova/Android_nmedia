@@ -10,7 +10,7 @@ import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.dto.Post
 
-private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
+private const val BASE_URL = "${BuildConfig.BASE_URL}/api/"
 
 private val logging = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {
@@ -32,6 +32,9 @@ interface PostApiService {
 
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
+
+    @GET("posts/{id}/newer")
+    suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
 
     @GET("posts/{id}")
     suspend fun getPostById(@Path("id") id: Long): Response<Post>

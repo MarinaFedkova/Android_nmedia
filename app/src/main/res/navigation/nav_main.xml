@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_fragmentFeed_to_editPostFragment"
             app:destination="@id/editPostFragment" />
+        <action
+            android:id="@+id/action_fragmentFeed_self"
+            app:destination="@id/fragmentFeed" />
     </fragment>
     <fragment
         android:id="@+id/newPostFragment"

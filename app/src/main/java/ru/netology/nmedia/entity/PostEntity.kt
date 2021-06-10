@@ -17,13 +17,14 @@ data class PostEntity (
     val likes: Long,
     val reposts: Long,
     val videoUrl: String?,
+    val wasRead: Boolean,
     //val attachment: Attachment?
 ) {
-    fun toDto() = Post(id, author, authorAvatar, content, published, likedByMe, likes, reposts, videoUrl/*, attachment*/)
+    fun toDto() = Post(id, author, authorAvatar, content, published, likedByMe, likes, reposts, videoUrl, wasRead/*, attachment*/)
 
     companion object {
         fun fromDto(dto: Post) =
-            PostEntity(dto.id, dto.author, dto.authorAvatar, dto.content, dto.published, dto.likedByMe, dto.likes, dto.reposts, dto.videoUrl/*, dto.attachment*/)
+            PostEntity(dto.id, dto.author, dto.authorAvatar, dto.content, dto.published, dto.likedByMe, dto.likes, dto.reposts, dto.videoUrl, dto.wasRead/*, dto.attachment*/)
         }
     }
 
