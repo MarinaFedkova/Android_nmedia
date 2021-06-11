@@ -14,7 +14,8 @@ import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.R.id.action_fragmentFeed_self
 import ru.netology.nmedia.R.id.action_fragmentFeed_to_editPostFragment
-import ru.netology.nmedia.activity.CardPostFragment.Companion.postId
+import ru.netology.nmedia.activity.CardPostFragment.Companion.postArg
+import ru.netology.nmedia.activity.FragmentImage.Companion.imageUrl
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInterfactionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -75,10 +76,17 @@ class FragmentFeed : Fragment() {
 
             override fun onOpenPost(post: Post) {
                 findNavController().navigate(R.id.action_fragmentFeed_to_cardPostFragment,
-                    Bundle().apply
-                    {
-                        postId = post.id
+                    Bundle().apply {
+                        postArg = post.id
                     })
+            }
+
+            override fun onViewImage(post: Post) {
+                findNavController().navigate(R.id.action_fragmentFeed_to_fragmentImage,
+                Bundle().apply
+                 {
+                     imageUrl = post.attachment?.url
+                 })
             }
 
 

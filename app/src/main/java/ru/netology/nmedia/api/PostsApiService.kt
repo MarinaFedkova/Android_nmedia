@@ -1,5 +1,7 @@
 package ru.netology.nmedia.api
 
+import android.provider.MediaStore
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -8,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
+import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/"
@@ -19,14 +22,14 @@ private val logging = HttpLoggingInterceptor().apply {
 }
 
 private val client = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
+    .addInterceptor(logging)
+    .build()
 
 private val retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
-        .client(client)
-        .build()
+    .addConverterFactory(GsonConverterFactory.create())
+    .baseUrl(BASE_URL)
+    .client(client)
+    .build()
 
 interface PostApiService {
 
@@ -50,6 +53,10 @@ interface PostApiService {
 
     @POST("posts")
     suspend fun save(@Body post: Post): Response<Post>
+
+    @Multipart
+    @POST("media")
+    suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
 }
 
 object PostsApi {

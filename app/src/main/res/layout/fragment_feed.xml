@@ -102,6 +102,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="@string/add_post"
-        android:src="@drawable/ic_add_24"/>
+        android:src="@drawable/ic_add_24"
+        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,7 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 
 class CardPostFragment : Fragment() {
     companion object {
-        var Bundle.postId by LongArg
+        var Bundle.postArg by LongArg
     }
 
     private val viewModel: PostViewModel by viewModels(
@@ -27,9 +27,9 @@ class CardPostFragment : Fragment() {
     ): View {
         val binding = FragmentCardPostBinding.inflate(inflater, container, false)
 
-        val postId = requireArguments().postId ?: error("Post id is required")
+        val postId = requireArguments().postArg ?: error("Post id is required")
 
-        viewModel.getPostById(postId).let { /*post ->
+        viewModel.getPostById(postId).let { post ->
            binding.apply {
                 author.text = post.author
 
@@ -99,7 +99,7 @@ class CardPostFragment : Fragment() {
                 //  like.text = displayNumbers(post.likes)
                 //   repost.text = displayNumbers(post.reposts)
             }
-       */ }
+        }
 
         return binding.root
     }
