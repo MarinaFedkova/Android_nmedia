@@ -25,7 +25,7 @@ class EditPostFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentEditPostBinding.inflate(inflater, container, false)
 
         binding.editEdit.requestFocus()

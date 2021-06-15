@@ -8,6 +8,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okio.IOException
 import ru.netology.nmedia.api.*
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.*
 import ru.netology.nmedia.entity.PostEntity
@@ -17,6 +18,7 @@ import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
+import kotlin.math.log
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override val data = dao.getAll()
@@ -41,7 +43,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
-            delay(10_000L)
+            delay(120_000L)
                 val response = PostsApi.service.getNewer(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
@@ -165,6 +167,26 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun authentication(login: String, password: String) {
+        try {
+            val response = PostsApi.service.updateUser(login, password)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val authState = response.body() ?: throw ApiError(response.code(), response.message())
+                authState.token?.let {
+                    AppAuth.getInstance().setAuth(authState.id, it)
+                }
+        } catch (e: AppError) {
+            throw e
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {

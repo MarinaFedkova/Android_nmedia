@@ -5,8 +5,9 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
 @Parcelize
-data class Post (
+data class Post(
     val id: Long,
+    val authorId: Long,
     val author: String,
     val authorAvatar: String?,
     val content: String,
@@ -16,5 +17,6 @@ data class Post (
     val reposts: Long,
     val videoUrl: String?,
     val wasRead: Boolean = false,
-    val attachment: @RawValue Attachment?
-): Parcelable
+    val attachment: @RawValue Attachment?,
+    val ownedByMe: Boolean = false
+) : Parcelable
