@@ -36,3 +36,7 @@
 21.05.2021 home work 5 «2.4 Retrofit (CRUD)»
 
 04.06.2021 home work 8 «3.3 Coroutines в Android» Задача remove & likes
+
+11.06.2021 home work 12 «4.1 Загрузка и отображение изображений»
+
+15.06.2021 home work 11 «3.4 Flow»
