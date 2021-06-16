@@ -29,4 +29,11 @@
     <string name="network_error">Network error</string>
     <string name="error_unknown">Unknown error</string>
     <string name="error_db">Db error</string>
+    <string name="menu_save">Save</string>
+    <string name="description_photo">Photo</string>
+    <string name="remove">Remove</string>
+    <string name="description_select_photo">Select photo</string>
+    <string name="description_take_photo">Take photo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

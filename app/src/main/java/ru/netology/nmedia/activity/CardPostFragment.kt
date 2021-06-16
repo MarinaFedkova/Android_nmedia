@@ -1,19 +1,29 @@
 package ru.netology.nmedia.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import ru.netology.nmedia.BuildConfig
+import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentCardPostBinding
-import ru.netology.nmedia.util.LongArg
+import ru.netology.nmedia.dto.AttachmentType
+import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.util.StringArg
+import ru.netology.nmedia.view.load
+import ru.netology.nmedia.view.loadCircleCrop
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 
 class CardPostFragment : Fragment() {
+
     companion object {
-        var Bundle.postId by LongArg
+        var Bundle.textArg: String? by StringArg
     }
 
     private val viewModel: PostViewModel by viewModels(
@@ -27,21 +37,11 @@ class CardPostFragment : Fragment() {
     ): View {
         val binding = FragmentCardPostBinding.inflate(inflater, container, false)
 
-        val postId = requireArguments().postId ?: error("Post id is required")
-
-        viewModel.getPostById(postId).let { /*post ->
-           binding.apply {
+        val post: Post = arguments?.get("post") as Post
+        post.let {
+            binding.apply {
                 author.text = post.author
-
-                val url = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
-                Glide.with(avatar)
-                    .load(url)
-                    .timeout(10_000)
-                    .circleCrop()
-                    .placeholder(R.drawable.ic_baseline_loading_24)
-                    .error(R.drawable.ic_baseline_error_24)
-                    .into(avatar)
-                
+                avatar.loadCircleCrop("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
                 published.text = post.published
                 content.text = post.content
                 like.isChecked = post.likedByMe
@@ -50,16 +50,10 @@ class CardPostFragment : Fragment() {
                     video.visibility = View.VISIBLE
                 } else video.visibility = View.GONE
 
-                if (post.attachment?.url != null) {
+                if (post.attachment != null && post.attachment.type == AttachmentType.IMAGE) {
                     attachmentView.visibility = View.VISIBLE
-                     val urlAttachment = "http://10.0.2.2:9999/images/${post.attachment?.url}"
-                     Glide.with(binding.attachmentView)
-                         .load(urlAttachment)
-                         .timeout(10_000)
-                         .placeholder(R.drawable.ic_baseline_loading_24)
-                         .error(R.drawable.ic_baseline_error_24)
-                         .into(attachmentView)
-                 } else attachmentView.visibility = View.GONE
+                    attachmentView.load("${BuildConfig.BASE_URL}/media/${post.attachment.url}")
+                } else attachmentView.visibility = View.GONE
 
                 menu.setOnClickListener { it ->
                     PopupMenu(it.context, it).apply {
@@ -67,7 +61,7 @@ class CardPostFragment : Fragment() {
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
                                 R.id.remove -> {
-                                    viewModel.removeById(postId)
+                                    viewModel.removeById(post.id)
                                     findNavController().navigateUp()
                                     true
                                 }
@@ -81,7 +75,7 @@ class CardPostFragment : Fragment() {
                     }.show()
                 }
                 like.setOnClickListener {
-                    viewModel.likeById(postId)
+                    viewModel.likeById(post.id)
                 }
                 repost.setOnClickListener {
                     val intent = Intent().apply {
@@ -94,12 +88,20 @@ class CardPostFragment : Fragment() {
                     startActivity(repostIntent)
                 }
                 video.setOnClickListener {
-                    viewModel.video()
+                    //viewModel.video()
                 }
                 //  like.text = displayNumbers(post.likes)
                 //   repost.text = displayNumbers(post.reposts)
+
+                attachmentView.setOnClickListener {
+                    findNavController().navigate(R.id.action_cardPostFragment_to_fragmentImage,
+                        Bundle().apply
+                        {
+                            textArg = post.attachment?.url
+                        })
+                }
             }
-       */ }
+        }
 
         return binding.root
     }

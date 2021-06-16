@@ -1,7 +1,6 @@
 package ru.netology.nmedia.activity
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
-import ru.netology.nmedia.R.id.action_fragmentFeed_self
 import ru.netology.nmedia.R.id.action_fragmentFeed_to_editPostFragment
-import ru.netology.nmedia.activity.CardPostFragment.Companion.postId
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInterfactionListener
 import ru.netology.nmedia.adapter.PostsAdapter
@@ -75,12 +72,18 @@ class FragmentFeed : Fragment() {
 
             override fun onOpenPost(post: Post) {
                 findNavController().navigate(R.id.action_fragmentFeed_to_cardPostFragment,
-                    Bundle().apply
-                    {
-                        postId = post.id
+                    Bundle().apply {
+                        putParcelable("post", post)
                     })
             }
 
+            override fun onViewImage(post: Post) {
+                findNavController().navigate(R.id.action_fragmentFeed_to_fragmentImage,
+                    Bundle().apply
+                    {
+                        textArg = post.attachment?.url
+                    })
+            }
 
         })
 
@@ -102,13 +105,12 @@ class FragmentFeed : Fragment() {
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
             if (it > 0) binding.newer.visibility = View.VISIBLE
-            
+
         }
 
         binding.newer.setOnClickListener {
             viewModel.updatePosts()
            binding.list.smoothScrollToPosition(0)
-
             binding.newer.visibility = View.GONE
 
         }

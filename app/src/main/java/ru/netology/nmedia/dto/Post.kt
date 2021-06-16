@@ -4,6 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
+@Parcelize
 data class Post (
     val id: Long,
     val author: String,
@@ -15,5 +16,5 @@ data class Post (
     val reposts: Long,
     val videoUrl: String?,
     val wasRead: Boolean = false,
-    //val attachment: Attachment?
-)
+    val attachment: @RawValue Attachment?
+): Parcelable

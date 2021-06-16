@@ -11,7 +11,9 @@ import com.bumptech.glide.Glide
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
+import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.view.load
 import ru.netology.nmedia.view.loadCircleCrop
 import java.text.DecimalFormat
 
@@ -22,6 +24,7 @@ interface OnInterfactionListener {
     fun onRepost(post: Post) {}
     fun onVideo(post: Post) {}
     fun onOpenPost(post: Post) {}
+    fun onViewImage(post: Post) {}
 }
 
 class PostsAdapter(
@@ -55,16 +58,10 @@ class PostViewHolder(
                 video.visibility = View.VISIBLE
             } else video.visibility = View.GONE
 
-            /*if (post.attachment != null) {
+            if (post.attachment != null && post.attachment.type == AttachmentType.IMAGE) {
                 attachmentView.visibility = View.VISIBLE
-                val urlAttachment = "http://10.0.2.2:9999/images/${post.attachment.url}"
-                Glide.with(attachmentView)
-                    .load(urlAttachment)
-                    .timeout(10_000)
-                    .placeholder(R.drawable.ic_baseline_loading_24)
-                    .error(R.drawable.ic_baseline_error_24)
-                    .into(attachmentView)
-            } else attachmentView.visibility = View.GONE*/
+                attachmentView.load("${BuildConfig.BASE_URL}/media/${post.attachment?.url}")
+            } else attachmentView.visibility = View.GONE
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -95,21 +92,24 @@ class PostViewHolder(
             content.setOnClickListener {
                 onInterfactionListener.onOpenPost(post)
             }
-            like.text = displayNumbers(post.likes)
-            repost.text = displayNumbers(post.reposts)
+            attachmentView.setOnClickListener {
+                onInterfactionListener.onViewImage(post)
+            }
+            //like.text = displayNumbers(post.likes)
+            //repost.text = displayNumbers(post.reposts)
 
         }
     }
 
-    private fun displayNumbers(number: Long): String {
-        val decimalFormat = DecimalFormat("#.#")
-        return when (number) {
-            in 0..999 -> "$number"
-            in 1000..99_999 -> "${decimalFormat.format(number.toFloat() / 1_000)}K"
-            in 10_000..999_999 -> "${number / 1_000}K"
-            else -> "${decimalFormat.format(number.toFloat() / 1_000_000)}M"
-        }
-    }
+//    private fun displayNumbers(number: Long): String {
+//        val decimalFormat = DecimalFormat("#.#")
+//        return when (number) {
+//            in 0..999 -> "$number"
+//            in 1000..99_999 -> "${decimalFormat.format(number.toFloat() / 1_000)}K"
+//            in 10_000..999_999 -> "${number / 1_000}K"
+//            else -> "${decimalFormat.format(number.toFloat() / 1_000_000)}M"
+//        }
+//    }
 }
 
 

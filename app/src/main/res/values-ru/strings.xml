@@ -29,4 +29,9 @@
     <string name="network_error">Сетевая ошибка</string>
     <string name="error_unknown">Неизвестная ошибка</string>
     <string name="error_db">Ошибка базы данных</string>
+    <string name="menu_save">Сохранить</string>
+    <string name="description_photo">Фото</string>
+    <string name="remove">Заменить</string>
+    <string name="description_select_photo">Выбрать фото</string>
+    <string name="description_take_photo">Сделать фото</string>
 </resources>
