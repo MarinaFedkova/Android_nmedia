@@ -19,9 +19,16 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val authenticated: Boolean
     get() = AppAuth.getInstance().authStateFlow.value.id != 0L
 
-    fun authentification(login: String, password: String) {
+    fun authentication(login: String, pass: String) {
         viewModelScope.launch {
-            repository.authentication(login, password)
+            repository.authentication(login, pass)
         }
     }
+
+    fun registration(name: String, login: String, pass: String) {
+        viewModelScope.launch {
+            repository.registration(name, login, pass)
+        }
+    }
+
 }

@@ -18,8 +18,8 @@ interface PostRepository {
     suspend fun save(post: Post)
     suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
     suspend fun upload(upload: MediaUpload): Media
-    suspend fun authentication(login: String, password: String)
-
+    suspend fun authentication(login: String, pass: String)
+    suspend fun registration(name: String, login: String, pass: String)
     suspend fun repostById(id: Long)
     suspend fun video()
 

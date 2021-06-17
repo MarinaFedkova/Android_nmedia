@@ -13,7 +13,7 @@
         android:layout_marginTop="@dimen/common_spacing"
         android:contentDescription="@string/description_newer"
         android:text="@string/newer_posts"
-        android:visibility="visible"
+        android:visibility="gone"
         android:textAllCaps="false"
         app:icon="@drawable/ic_baseline_arrow_upward_24"
         app:layout_constraintEnd_toEndOf="parent"

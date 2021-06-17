@@ -13,8 +13,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/icon_button_min_size"
+        android:hint="@string/auth_name"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/icon_button_min_size"
         android:hint="@string/login"
-        app:errorEnabled="true"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -22,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-             />
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -43,8 +58,24 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/icon_button_min_size"
+        android:hint="@string/password_confirm"
+        app:endIconMode="password_toggle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Button
-        android:id="@+id/button_sign_in"
+        android:id="@+id/button_sign_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -52,6 +83,6 @@
         android:padding="@dimen/common_spacing"
         android:paddingStart="@dimen/icon_button_min_size"
         android:paddingEnd="@dimen/icon_button_min_size"
-        android:text="@string/sign_in" />
+        android:text="@string/sign_up" />
 
 </LinearLayout>

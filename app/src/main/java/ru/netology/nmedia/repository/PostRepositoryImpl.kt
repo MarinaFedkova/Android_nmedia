@@ -9,6 +9,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okio.IOException
 import ru.netology.nmedia.api.*
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.*
 import ru.netology.nmedia.entity.PostEntity
@@ -44,13 +45,13 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
             delay(120_000L)
-                val response = PostsApi.service.getNewer(id)
+            val response = PostsApi.service.getNewer(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-                dao.insert(body.toEntity())
-                emit(body.size)
+            dao.insert(body.toEntity())
+            emit(body.size)
         }
     }
         .catch { e -> throw AppError.from(e) }
@@ -145,7 +146,8 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         try {
             val media = upload(upload)
             // TODO: add support for other types
-            val postWithAttachment = post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            val postWithAttachment =
+                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
             save(postWithAttachment)
         } catch (e: AppError) {
             throw e
@@ -174,19 +176,31 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
-    override suspend fun authentication(login: String, password: String) {
+    override suspend fun authentication(login: String, pass: String) {
         try {
-            val response = PostsApi.service.updateUser(login, password)
+            val response = PostsApi.service.updateUser(login, pass)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-
             val authState = response.body() ?: throw ApiError(response.code(), response.message())
-                authState.token?.let {
-                    AppAuth.getInstance().setAuth(authState.id, it)
-                }
-        } catch (e: AppError) {
-            throw e
+            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun registration(name: String, login: String, pass: String) {
+        try {
+            val response = PostsApi.service.registrationUser(name, login, pass)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val authState = response.body() ?: throw ApiError(response.code(), response.message())
+            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {

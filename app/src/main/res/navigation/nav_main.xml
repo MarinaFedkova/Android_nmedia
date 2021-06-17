@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_fragmentFeed_to_fragmentSignIn"
             app:destination="@id/fragmentSignIn" />
+        <action
+            android:id="@+id/action_fragmentFeed_to_fragmentSignUp"
+            app:destination="@id/fragmentSignUp" />
     </fragment>
     <fragment
         android:id="@+id/newPostFragment"
@@ -37,6 +40,9 @@
         <action
             android:id="@+id/action_newPostFragment_to_fragmentSignIn"
             app:destination="@id/fragmentSignIn" />
+        <action
+            android:id="@+id/action_newPostFragment_to_fragmentSignUp"
+            app:destination="@id/fragmentSignUp" />
     </fragment>
     <fragment
         android:id="@+id/cardPostFragment"
@@ -49,6 +55,9 @@
         <action
             android:id="@+id/action_cardPostFragment_to_fragmentSignIn"
             app:destination="@id/fragmentSignIn" />
+        <action
+            android:id="@+id/action_cardPostFragment_to_fragmentSignUp"
+            app:destination="@id/fragmentSignUp" />
     </fragment>
     <fragment
         android:id="@+id/editPostFragment"
@@ -68,5 +77,9 @@
         android:name="ru.netology.nmedia.activity.FragmentSignIn"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" />
+    <fragment
+        android:id="@+id/fragmentSignUp"
+        android:name="ru.netology.nmedia.activity.FragmentSignUp"
+        android:label="FragmentSignUp" />
 
 </navigation>

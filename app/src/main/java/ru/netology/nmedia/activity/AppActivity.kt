@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
@@ -59,19 +60,23 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         return when(item.itemId) {
             R.id.signin -> {
                 findNavController(R.id.fragment_nav_host).navigate(R.id.action_fragmentFeed_to_fragmentSignIn)
-
-                // TODO: just hardcode it, implementation must be in homework
-               AppAuth.getInstance().setAuth(5, "x-token")
                 true
             }
             R.id.signup -> {
-                // TODO: just hardcode it, implementation must be in homework
-                AppAuth.getInstance().setAuth(5, "x-token")
+                findNavController(R.id.fragment_nav_host).navigate(R.id.action_fragmentFeed_to_fragmentSignUp)
                 true
             }
             R.id.signout -> {
-                // TODO: just hardcode it, implementation must be in homework
-                AppAuth.getInstance().removeAuth()
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.sign_out_dialog)
+                    .setPositiveButton(R.string.positive_button) { dialog, id ->
+                        AppAuth.getInstance().removeAuth()
+                        findNavController(R.id.fragment_nav_host).navigateUp()
+                    }
+                    .setNegativeButton(R.string.negative_button) {dialog, id ->
+                        return@setNegativeButton
+                    }
+                    .show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
