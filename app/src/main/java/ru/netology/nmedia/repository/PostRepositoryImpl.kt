@@ -8,6 +8,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okio.IOException
 import ru.netology.nmedia.api.*
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.*
 import ru.netology.nmedia.entity.PostEntity
@@ -25,13 +26,13 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     override suspend fun getAll() {
         try {
-            val response = PostsApi.service.getAll()
+            val response = Api.service.getAll()
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
+            dao.insert(body.toEntity(wasRead = true))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -42,25 +43,25 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
             delay(10_000L)
-                val response = PostsApi.service.getNewer(id)
+            val response = Api.service.getNewer(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-                dao.insert(body.toEntity())
-                emit(body.size)
+            dao.insert(body.toEntity(wasRead = false))
+            emit(dao.getUnreadCount())
         }
     }
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
-    override suspend fun updatePosts() {
-        dao.updatePosts()
+    override suspend fun readAll() {
+        dao.readAll()
     }
 
     override suspend fun getPostById(id: Long) {
         try {
-            val response = PostsApi.service.getPostById(id)
+            val response = Api.service.getPostById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -77,7 +78,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override suspend fun likeById(id: Long) {
         dao.likeById(id)
         try {
-            val response = PostsApi.service.likeById(id)
+            val response = Api.service.likeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -94,7 +95,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override suspend fun dislikeById(id: Long) {
         dao.likeById(id)
         try {
-            val response = PostsApi.service.dislikeById(id)
+            val response = Api.service.dislikeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -111,7 +112,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override suspend fun removeById(id: Long) {
         dao.removeById(id)
         try {
-            val response = PostsApi.service.removeById(id)
+            val response = Api.service.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -125,7 +126,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     override suspend fun save(post: Post) {
         try {
-            val response = PostsApi.service.save(post)
+            val response = Api.service.save(post)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -143,7 +144,8 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         try {
             val media = upload(upload)
             // TODO: add support for other types
-            val postWithAttachment = post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            val postWithAttachment =
+                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
             save(postWithAttachment)
         } catch (e: AppError) {
             throw e
@@ -159,12 +161,44 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             val media = MultipartBody.Part.createFormData(
                 "file", upload.file.name, upload.file.asRequestBody()
             )
-            val response = PostsApi.service.upload(media)
+            val response = Api.service.upload(media)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             return response.body() ?: throw ApiError(response.code(), response.message())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun authentication(login: String, pass: String) {
+        try {
+            val response = Api.service.updateUser(login, pass)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val authState = response.body() ?: throw ApiError(response.code(), response.message())
+            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun registration(name: String, login: String, pass: String) {
+        try {
+            val response = Api.service.registrationUser(name, login, pass)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val authState = response.body() ?: throw ApiError(response.code(), response.message())
+            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {

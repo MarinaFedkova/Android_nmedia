@@ -102,6 +102,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide_version"
     implementation "com.google.firebase:firebase-messaging:$firebase_messages_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
     implementation "com.github.dhaval2404:imagepicker:$imagepicker_version"
 
     testImplementation "junit:junit:$junit_version"

@@ -8,7 +8,7 @@
     <string name="description_viewing">Viewing</string>
     <string name="description_post_save">Save</string>
     <string name="description_newer">new posts</string>
-    <string name="newer_posts">newer posts: </string>
+    <string name="newer_posts">newer posts</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_remove">Remove</string>
     <string name="post_text">Post Text</string>
@@ -34,4 +34,16 @@
     <string name="remove">Remove</string>
     <string name="description_select_photo">Select photo</string>
     <string name="description_take_photo">Take photo</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="password_confirm">Confirm password</string>
+    <string name="sign_out_dialog">Are you sure?</string>
+    <string name="positive_button">YES</string>
+    <string name="negative_button">NO</string>
+    <string name="auth_name">Name</string>
+    <string name="error_edit">Can\'t be empty</string>
+
 </resources>

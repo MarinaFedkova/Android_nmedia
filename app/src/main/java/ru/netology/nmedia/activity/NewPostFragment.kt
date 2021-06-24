@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.fragment.app.Fragment
@@ -60,7 +59,7 @@ class NewPostFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
         fragmentBinding = binding
 
@@ -78,10 +77,7 @@ class NewPostFragment : Fragment() {
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
-                    Activity.RESULT_OK -> {
-                        val uri: Uri? = it.data?.data
-                        viewModel.changePhoto(uri, uri?.toFile())
-                    }
+                    Activity.RESULT_OK -> viewModel.changePhoto(it.data?.data)
                 }
             }
 
@@ -104,7 +100,7 @@ class NewPostFragment : Fragment() {
         }
 
         binding.remotePhoto.setOnClickListener {
-            viewModel.changePhoto(null, null)
+            viewModel.changePhoto(null)
         }
 
         viewModel.postCreated.observe(viewLifecycleOwner) {
