@@ -32,7 +32,6 @@ private val empty = Post(
     likes = 0,
     reposts = 0,
     videoUrl = "",
-    wasRead = false,
     attachment = null
 )
 
@@ -92,10 +91,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updatePosts() = viewModelScope.launch {
+    fun readAll() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(loading = true)
-            repository.getAll()
+            repository.readAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)

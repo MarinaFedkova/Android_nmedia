@@ -8,7 +8,7 @@
     <string name="description_viewing">Viewing</string>
     <string name="description_post_save">Save</string>
     <string name="description_newer">new posts</string>
-    <string name="newer_posts">newer posts: </string>
+    <string name="newer_posts">newer posts</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_remove">Remove</string>
     <string name="post_text">Post Text</string>

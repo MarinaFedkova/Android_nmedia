@@ -16,7 +16,7 @@ data class Post(
     val likes: Long,
     val reposts: Long,
     val videoUrl: String?,
-    val wasRead: Boolean = false,
+    //val wasRead: Boolean = false,
     val attachment: @RawValue Attachment?,
     val ownedByMe: Boolean = false
 ) : Parcelable

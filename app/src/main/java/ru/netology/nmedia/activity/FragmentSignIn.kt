@@ -23,12 +23,17 @@ class FragmentSignIn : Fragment() {
         val binding = FragmentSignInBinding.inflate(inflater, container, false)
 
         binding.buttonSignIn.setOnClickListener {
+//            if (binding.login.text == null) {
+//                binding.login.error = getString(R.string.error_edit)
+//                return@setOnClickListener
+//            } else {
                 val login = binding.login.text?.trim().toString()
                 val pass = binding.password.text?.trim().toString()
                 viewModelAuth.authentication(login, pass)
                 AndroidUtils.hideKeyboard(it)
                 findNavController().navigateUp()
             }
+       //}
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             findNavController().navigateUp()
