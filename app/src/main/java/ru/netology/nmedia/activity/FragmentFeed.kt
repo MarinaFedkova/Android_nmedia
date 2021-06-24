@@ -122,11 +122,9 @@ class FragmentFeed : Fragment() {
         }
 
         binding.newer.setOnClickListener {
-             viewModel.updatePosts()
-             binding.list.smoothScrollToPosition(0)
-
+            viewModel.updatePosts()
+           binding.list.smoothScrollToPosition(0)
             binding.newer.visibility = View.GONE
-
         }
 
         binding.fab.setOnClickListener {
