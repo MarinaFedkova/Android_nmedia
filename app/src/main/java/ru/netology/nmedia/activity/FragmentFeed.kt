@@ -140,6 +140,7 @@ class FragmentFeed : Fragment() {
              binding.list.smoothScrollToPosition(0)
             binding.newer.isInvisible = true
             viewModel.readAll()
+
         }
 
         binding.fab.setOnClickListener {
