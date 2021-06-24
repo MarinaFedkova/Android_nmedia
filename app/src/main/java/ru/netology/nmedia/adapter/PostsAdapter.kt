@@ -7,7 +7,6 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
@@ -15,7 +14,6 @@ import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.view.load
 import ru.netology.nmedia.view.loadCircleCrop
-import java.text.DecimalFormat
 
 interface OnInterfactionListener {
     fun onLike(post: Post) {}
@@ -60,11 +58,16 @@ class PostViewHolder(
 
             if (post.attachment != null && post.attachment.type == AttachmentType.IMAGE) {
                 attachmentView.visibility = View.VISIBLE
-                attachmentView.load("${BuildConfig.BASE_URL}/media/${post.attachment?.url}")
+                attachmentView.load("${BuildConfig.BASE_URL}/media/${post.attachment.url}")
             } else attachmentView.visibility = View.GONE
+
+            menu.visibility = if (post.ownedByMe) View.VISIBLE else View.INVISIBLE
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
+                    // TODO: if we don't have other options, just remove dots
+                    menu.setGroupVisible(R.id.owned, post.ownedByMe)
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.remove -> {

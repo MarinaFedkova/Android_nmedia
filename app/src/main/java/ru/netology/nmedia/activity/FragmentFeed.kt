@@ -17,11 +17,15 @@ import ru.netology.nmedia.adapter.OnInterfactionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 import java.io.File
 
 class FragmentFeed : Fragment() {
     private val viewModel: PostViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
+    private val viewModelAuth: AuthViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
 
@@ -44,10 +48,18 @@ class FragmentFeed : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                if (!viewModelAuth.authenticated) {
+                    findNavController().navigate(R.id.action_fragmentFeed_to_fragmentSignIn)
+                    return
+                } else viewModel.likeById(post.id)
+
             }
 
             override fun onRemove(post: Post) {
+                if (!viewModelAuth.authenticated) {
+                    findNavController().navigate(R.id.action_fragmentFeed_to_fragmentSignIn)
+                    return
+                }
                 viewModel.removeById(post.id)
             }
 
@@ -105,17 +117,21 @@ class FragmentFeed : Fragment() {
 
         viewModel.newerCount.observe(viewLifecycleOwner) {
             if (it > 0) binding.newer.visibility = View.VISIBLE
-
+            // TODO: just log it, interaction must be in homework
+            println(it)
         }
 
         binding.newer.setOnClickListener {
             viewModel.updatePosts()
            binding.list.smoothScrollToPosition(0)
             binding.newer.visibility = View.GONE
-
         }
 
         binding.fab.setOnClickListener {
+            if (!viewModelAuth.authenticated) {
+                findNavController().navigate(R.id.action_fragmentFeed_to_fragmentSignIn)
+                return@setOnClickListener
+            }
             findNavController().navigate(R.id.action_fragmentFeed_to_newPostFragment,
                 Bundle().apply
                 {
