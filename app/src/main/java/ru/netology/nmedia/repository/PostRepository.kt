@@ -22,6 +22,8 @@ interface PostRepository {
     suspend fun registration(name: String, login: String, pass: String)
     suspend fun repostById(id: Long)
     suspend fun video()
+    suspend fun saveWork(post: Post, upload: MediaUpload? = null): Long
+    suspend fun processWork(id: Long)
 
 }
 
