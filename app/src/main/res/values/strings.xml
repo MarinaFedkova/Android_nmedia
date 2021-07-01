@@ -19,6 +19,7 @@
     <string name="save">Save</string>
     <string name="google_play_unavailable">Google Api Unavailable</string>
     <string name="notification_user_liked">User %1$s liked %2$s\'s post</string>
+    <string name="notification_user">User %1$s get notification %2$s</string>
     <string name="channel_remote_name">Server notifications</string>
     <string name="channel_remote_description">Notifications from remote server</string>
     <string name="notification_new_post">%1$s published a new post:\n\n %2$s</string>

@@ -37,38 +37,35 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         val id = AppAuth.getInstance().authStateFlow.value.id
-        when (message.data[channelId]) {
-            id.toString(), null -> when (Action.values().find { it.name == action }) {
-                Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
-                Action.NEW_POST -> handleNewPost(
-                    gson.fromJson(
-                        message.data[content],
-                        NewPost::class.java
-                    )
-                )
-            }
+        val recipientId = message.data["recipientId"]?.toLong()
+        when (recipientId) {
+            id, null -> handleMessage(gson.fromJson(message.data[content], PushMessage::class.java))
             else -> AppAuth.getInstance().sendPushToken()
         }
-        println(message.data["content"])
     }
-
-        //TODO homework
-//        message.data[action]?.let { action ->
-//            when (Action.values().find { it.name == action }) {
-//                Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
-//                Action.NEW_POST -> handleNewPost(
-//                    gson.fromJson(message.data[content], NewPost::class.java)
-//                )
-//            }
-//        }
-
 
     override fun onNewToken(token: String) {
         AppAuth.getInstance().sendPushToken(token)
         Log.d(TAG, "Refreshed token: $token")
     }
+    private fun handleMessage(content: PushMessage) {
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(
+                getString(
+                    R.string.notification_user,
+                    content.recipientId.toString(),
+                    content.content,
+                )
+            )
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
 
-    private fun handleLike(content: Like) {
+        NotificationManagerCompat.from(this)
+            .notify(Random.nextInt(100_000), notification)
+    }
+
+  /*  private fun handleLike(content: Like) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(
@@ -105,7 +102,7 @@ class FCMService : FirebaseMessagingService() {
         NotificationManagerCompat.from(this)
             .notify(Random.nextInt(100_000), notification)
 
-    }
+    } */
 }
 
 enum class Action {
@@ -123,4 +120,9 @@ data class Like(
 data class NewPost(
     val userName: String,
     val text: String
+)
+
+data class PushMessage(
+    val recipientId: Long?,
+    val content: String
 )
