@@ -9,7 +9,6 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import ru.netology.nmedia.databinding.FragmentSignInBinding
 import ru.netology.nmedia.databinding.FragmentSignUpBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.viewmodel.AuthViewModel
@@ -25,7 +24,9 @@ class FragmentSignUp : Fragment() {
 
         binding.buttonSignUp.setOnClickListener {
 
-            if (binding.password.text?.trim().toString() == binding.passwordConfirm.text?.trim().toString()) {
+            if (binding.password.text?.trim().toString() == binding.passwordConfirm.text?.trim()
+                    .toString()
+            ) {
                 val name = binding.name.text?.trim().toString()
                 val login = binding.login.text?.trim().toString()
                 val pass = binding.passwordConfirm.text?.trim().toString()
@@ -33,10 +34,10 @@ class FragmentSignUp : Fragment() {
                 AndroidUtils.hideKeyboard(it)
                 findNavController().navigateUp()
             } else {
-                Toast.makeText(requireContext(), "password is not correct", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "password is not correct", Toast.LENGTH_LONG)
+                    .show()
                 return@setOnClickListener
             }
-
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {

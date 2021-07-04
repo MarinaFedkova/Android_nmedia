@@ -1,7 +1,6 @@
 package ru.netology.nmedia.application
 
 import android.app.Application
-import androidx.constraintlayout.solver.state.State
 import androidx.work.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +22,6 @@ class NMediaApplication : Application() {
         appScope.launch {
             AppAuth.initApp(this@NMediaApplication)
         }
-
     }
 
     private fun setupWork() {
@@ -40,6 +38,5 @@ class NMediaApplication : Application() {
                 request
             )
         }
-
     }
 }

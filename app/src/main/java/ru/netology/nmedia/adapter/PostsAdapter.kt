@@ -47,7 +47,6 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             author.text = post.author
-            published.text = post.published
             avatar.loadCircleCrop("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
             content.text = post.content
             like.isChecked = post.likedByMe
@@ -98,21 +97,8 @@ class PostViewHolder(
             attachmentView.setOnClickListener {
                 onInterfactionListener.onViewImage(post)
             }
-            //like.text = displayNumbers(post.likes)
-            //repost.text = displayNumbers(post.reposts)
-
         }
     }
-
-//    private fun displayNumbers(number: Long): String {
-//        val decimalFormat = DecimalFormat("#.#")
-//        return when (number) {
-//            in 0..999 -> "$number"
-//            in 1000..99_999 -> "${decimalFormat.format(number.toFloat() / 1_000)}K"
-//            in 10_000..999_999 -> "${number / 1_000}K"
-//            else -> "${decimalFormat.format(number.toFloat() / 1_000_000)}M"
-//        }
-//    }
 }
 
 

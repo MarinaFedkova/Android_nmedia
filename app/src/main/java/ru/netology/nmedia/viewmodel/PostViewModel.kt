@@ -21,6 +21,7 @@ import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
+import ru.netology.nmedia.work.RemovePostWorker
 import ru.netology.nmedia.work.SavePostWorker
 
 private val empty = Post(
@@ -80,10 +81,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val photo: LiveData<PhotoModel>
         get() = _photo
 
-//    private val _networkError = SingleLiveEvent<String>()
-//    val networkError: LiveData<String>
-//        get() = _networkError
-
     init {
         loadPosts()
     }
@@ -106,10 +103,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)
         }
-    }
-
-    fun getPostById(id: Long) {
-
     }
 
     fun likeById(id: Long) {
@@ -139,7 +132,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             try {
-                repository.removeById(id)
+                val data = workDataOf(RemovePostWorker.name to id)
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+                val request = OneTimeWorkRequestBuilder<RemovePostWorker>()
+                    .setInputData(data)
+                    .setConstraints(constraints)
+                    .build()
+                workManager.enqueue(request)
+
             } catch (e: Exception) {
                 _dataState.value = FeedModelState(error = true)
             }
@@ -159,7 +161,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     fun save() {
         edited.value?.let {
             _postCreated.value = Unit
@@ -168,7 +169,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     val id = repository.saveWork(
                         it, _photo.value?.uri?.let { MediaUpload(it.toFile()) }
                     )
-                val data = workDataOf(SavePostWorker.postKey to id)
+                    val data = workDataOf(SavePostWorker.postKey to id)
                     val constraints = Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()

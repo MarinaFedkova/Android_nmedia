@@ -1,6 +1,5 @@
 package ru.netology.nmedia.repository
 
-import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.lifecycle.*
@@ -132,37 +131,6 @@ class PostRepositoryImpl(
         }
     }
 
-    override suspend fun save(post: Post) {
-        try {
-            val response = Api.service.save(post)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
-
-    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
-        try {
-            val media = upload(upload)
-            // TODO: add support for other types
-            val postWithAttachment =
-                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-            save(postWithAttachment)
-        } catch (e: AppError) {
-            throw e
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
 
     override suspend fun upload(upload: MediaUpload): Media {
         try {
@@ -226,11 +194,25 @@ class PostRepositoryImpl(
         postWorkDao.insert(PostWorkEntity.fromDto(post, upload?.file?.toUri()?.toString()))
 
     override suspend fun processWork(id: Long) {
-        val postToUoload = postWorkDao.getById(id) ?: return
-            // TODO: handle this in homework
-            println(postToUoload)
+        val postToUpload = postWorkDao.getById(id).toDto()
+        if (postToUpload.attachment == null) {
+            val response = Api.service.save(postToUpload)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.insert(PostEntity.fromDto(body))
+        } else {
+            val media = upload(MediaUpload(postToUpload.attachment.url.toUri().toFile()))
+            // TODO: add support for other types
+            val postWithAttachment =
+                postToUpload.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            val response = Api.service.save(postWithAttachment)
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.insert(PostEntity.fromDto(body))
+        }
+        postWorkDao.removeById(id)
     }
 }
+
+
 
 
 

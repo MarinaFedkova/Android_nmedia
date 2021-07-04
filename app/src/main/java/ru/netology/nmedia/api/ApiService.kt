@@ -23,7 +23,6 @@ private val logging = HttpLoggingInterceptor().apply {
 }
 
 private val client = OkHttpClient.Builder()
-    .addInterceptor(logging)
     .addInterceptor { chain ->
         AppAuth.getInstance().authStateFlow.value.token?.let { token ->
             val newRequest = chain.request().newBuilder()
@@ -33,6 +32,7 @@ private val client = OkHttpClient.Builder()
         }
         chain.proceed(chain.request())
     }
+    .addInterceptor(logging)
     .build()
 
 
@@ -74,11 +74,18 @@ interface ApiService {
 
     @FormUrlEncoded
     @POST("users/authentication")
-    suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): Response<AuthState>
+    suspend fun updateUser(
+        @Field("login") login: String,
+        @Field("pass") pass: String
+    ): Response<AuthState>
 
     @FormUrlEncoded
     @POST("users/registration")
-    suspend fun registrationUser(@Field("name") name: String, @Field("login") login: String, @Field("pass") pass: String): Response<AuthState>
+    suspend fun registrationUser(
+        @Field("name") name: String,
+        @Field("login") login: String,
+        @Field("pass") pass: String
+    ): Response<AuthState>
 }
 
 object Api {

@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nmedia.R
 import ru.netology.nmedia.R.id.action_fragmentFeed_to_editPostFragment
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
@@ -33,6 +34,7 @@ class FragmentFeed : Fragment() {
     private val viewModelAuth: AuthViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
+
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
@@ -159,11 +161,6 @@ class FragmentFeed : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.refreshPosts()
         }
-
-//        binding.retryButton.setOnClickListener {
-//            viewModel.loadPosts()
-//        }
-
         return binding.root
     }
 }

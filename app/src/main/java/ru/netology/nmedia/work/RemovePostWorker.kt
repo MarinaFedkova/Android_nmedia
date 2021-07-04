@@ -7,16 +7,16 @@ import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 
-class SavePostWorker(
+class RemovePostWorker(
     appllicationContext: Context,
     params: WorkerParameters
 ) : CoroutineWorker(appllicationContext, params) {
     companion object {
-        const val postKey = "post"
+        const val name = "ru.netology.work.RemovePostsWorker"
     }
 
     override suspend fun doWork(): Result {
-        val id = inputData.getLong(postKey, 0L)
+        val id = inputData.getLong(name, 0L)
         if (id == 0L) {
             return Result.failure()
         }
@@ -26,7 +26,7 @@ class SavePostWorker(
                 AppDb.getInstance(context = applicationContext).postWorkDao(),
             )
         return try {
-            repository.processWork(id)
+            repository.removeById(id)
             Result.success()
         } catch (e: Exception) {
             Result.retry()
