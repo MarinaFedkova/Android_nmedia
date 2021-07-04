@@ -45,7 +45,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         }
 
         FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
-            if(!task.isSuccessful) {
+            if (!task.isSuccessful) {
                 println("some stuff happend: ${task.exception}")
                 return@addOnCompleteListener
             }
@@ -54,7 +54,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         }
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if(!task.isSuccessful) {
+            if (!task.isSuccessful) {
                 println("some stuff happend: ${task.exception}")
                 return@addOnCompleteListener
             }
@@ -76,7 +76,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.signin -> {
                 findNavController(R.id.fragment_nav_host).navigate(R.id.action_fragmentFeed_to_fragmentSignIn)
                 true
@@ -92,7 +92,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
                         AppAuth.getInstance().removeAuth()
                         findNavController(R.id.fragment_nav_host).navigateUp()
                     }
-                    .setNegativeButton(R.string.negative_button) {dialog, id ->
+                    .setNegativeButton(R.string.negative_button) { dialog, id ->
                         return@setNegativeButton
                     }
                     .show()

@@ -15,13 +15,13 @@ interface PostRepository {
     suspend fun likeById(id: Long)
     suspend fun dislikeById(id: Long)
     suspend fun removeById(id: Long)
-    suspend fun save(post: Post)
-    suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
     suspend fun upload(upload: MediaUpload): Media
     suspend fun authentication(login: String, pass: String)
     suspend fun registration(name: String, login: String, pass: String)
     suspend fun repostById(id: Long)
     suspend fun video()
+    suspend fun saveWork(post: Post, upload: MediaUpload? = null): Long
+    suspend fun processWork(id: Long)
 
 }
 

@@ -42,7 +42,6 @@ class CardPostFragment : Fragment() {
             binding.apply {
                 author.text = post.author
                 avatar.loadCircleCrop("${BuildConfig.BASE_URL}/avatars/${post.authorAvatar}")
-                published.text = post.published
                 content.text = post.content
                 like.isChecked = post.likedByMe
                 like.text = "${post.likes}"
@@ -90,8 +89,6 @@ class CardPostFragment : Fragment() {
                 video.setOnClickListener {
                     //viewModel.video()
                 }
-                //  like.text = displayNumbers(post.likes)
-                //   repost.text = displayNumbers(post.reposts)
 
                 attachmentView.setOnClickListener {
                     findNavController().navigate(R.id.action_cardPostFragment_to_fragmentImage,
