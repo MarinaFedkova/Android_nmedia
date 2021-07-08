@@ -1,15 +1,24 @@
 package ru.netology.nmedia.work
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
+import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SavePostWorker(
-    appllicationContext: Context,
-    params: WorkerParameters
+@HiltWorker
+class SavePostWorker @AssistedInject constructor(
+    @Assisted appllicationContext: Context,
+    @Assisted params: WorkerParameters,
+    private val repository: PostRepository
 ) : CoroutineWorker(appllicationContext, params) {
     companion object {
         const val postKey = "post"
@@ -20,11 +29,6 @@ class SavePostWorker(
         if (id == 0L) {
             return Result.failure()
         }
-        val repository: PostRepository =
-            PostRepositoryImpl(
-                AppDb.getInstance(context = applicationContext).postDao(),
-                AppDb.getInstance(context = applicationContext).postWorkDao(),
-            )
         return try {
             repository.processWork(id)
             Result.success()
@@ -33,3 +37,19 @@ class SavePostWorker(
         }
     }
 }
+
+//@Singleton
+//class SavePostsWorkerFactory @Inject constructor(
+//    private val repository: PostRepository,
+//) : WorkerFactory() {
+//    override fun createWorker(
+//        appContext: Context,
+//        workerClassName: String,
+//        workerParameters: WorkerParameters
+//    ): ListenableWorker? = when (workerClassName) {
+//        SavePostWorker::class.java.name ->
+//            SavePostWorker(appContext, workerParameters, repository)
+//        else ->
+//            null
+//    }
+//}

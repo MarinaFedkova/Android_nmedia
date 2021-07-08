@@ -22,24 +22,29 @@ import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PostRepositoryImpl(
-    private val dao: PostDao,
+@Singleton
+class PostRepositoryImpl @Inject constructor(
+    private val postDao: PostDao,
     private val postWorkDao: PostWorkDao,
+    private val apiService: ApiService,
+    private val auth: AppAuth,
 ) : PostRepository {
-    override val data = dao.getAll()
+    override val data = postDao.getAll()
         .map(List<PostEntity>::toDto)
         .flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
         try {
-            val response = Api.service.getAll()
+            val response = apiService.getAll()
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity(wasRead = true))
+            postDao.insert(body.toEntity(wasRead = true))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -50,31 +55,31 @@ class PostRepositoryImpl(
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
             delay(120_000L)
-            val response = Api.service.getNewer(id)
+            val response = apiService.getNewer(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity(wasRead = false))
-            emit(dao.getUnreadCount())
+            postDao.insert(body.toEntity(wasRead = false))
+            emit(postDao.getUnreadCount())
         }
     }
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
     override suspend fun readAll() {
-        dao.readAll()
+        postDao.readAll()
     }
 
     override suspend fun getPostById(id: Long) {
         try {
-            val response = Api.service.getPostById(id)
+            val response = apiService.getPostById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -83,15 +88,15 @@ class PostRepositoryImpl(
     }
 
     override suspend fun likeById(id: Long) {
-        dao.likeById(id)
+        postDao.likeById(id)
         try {
-            val response = Api.service.likeById(id)
+            val response = apiService.likeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -100,15 +105,15 @@ class PostRepositoryImpl(
     }
 
     override suspend fun dislikeById(id: Long) {
-        dao.likeById(id)
+        postDao.likeById(id)
         try {
-            val response = Api.service.dislikeById(id)
+            val response = apiService.dislikeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body))
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -117,9 +122,9 @@ class PostRepositoryImpl(
     }
 
     override suspend fun removeById(id: Long) {
-        dao.removeById(id)
+        postDao.removeById(id)
         try {
-            val response = Api.service.removeById(id)
+            val response = apiService.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -137,7 +142,7 @@ class PostRepositoryImpl(
             val media = MultipartBody.Part.createFormData(
                 "file", upload.file.name, upload.file.asRequestBody()
             )
-            val response = Api.service.upload(media)
+            val response = apiService.upload(media)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -152,12 +157,12 @@ class PostRepositoryImpl(
 
     override suspend fun authentication(login: String, pass: String) {
         try {
-            val response = Api.service.updateUser(login, pass)
+            val response = apiService.updateUser(login, pass)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val authState = response.body() ?: throw ApiError(response.code(), response.message())
-            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+            authState.token?.let { auth.setAuth(authState.id, it) }
 
         } catch (e: IOException) {
             throw NetworkError
@@ -168,12 +173,12 @@ class PostRepositoryImpl(
 
     override suspend fun registration(name: String, login: String, pass: String) {
         try {
-            val response = Api.service.registrationUser(name, login, pass)
+            val response = apiService.registrationUser(name, login, pass)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
             val authState = response.body() ?: throw ApiError(response.code(), response.message())
-            authState.token?.let { AppAuth.getInstance().setAuth(authState.id, it) }
+            authState.token?.let { auth.setAuth(authState.id, it) }
 
         } catch (e: IOException) {
             throw NetworkError
@@ -196,17 +201,17 @@ class PostRepositoryImpl(
     override suspend fun processWork(id: Long) {
         val postToUpload = postWorkDao.getById(id).toDto()
         if (postToUpload.attachment == null) {
-            val response = Api.service.save(postToUpload)
+            val response = apiService.save(postToUpload)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body))
         } else {
             val media = upload(MediaUpload(postToUpload.attachment.url.toUri().toFile()))
             // TODO: add support for other types
             val postWithAttachment =
                 postToUpload.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-            val response = Api.service.save(postWithAttachment)
+            val response = apiService.save(postWithAttachment)
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(PostEntity.fromDto(body))
+            postDao.insert(PostEntity.fromDto(body))
         }
         postWorkDao.removeById(id)
     }

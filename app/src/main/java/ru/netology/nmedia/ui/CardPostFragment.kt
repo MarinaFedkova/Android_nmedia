@@ -1,4 +1,4 @@
-package ru.netology.nmedia.activity
+package ru.netology.nmedia.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentCardPostBinding
@@ -19,7 +20,7 @@ import ru.netology.nmedia.view.load
 import ru.netology.nmedia.view.loadCircleCrop
 import ru.netology.nmedia.viewmodel.PostViewModel
 
-
+@AndroidEntryPoint
 class CardPostFragment : Fragment() {
 
     companion object {

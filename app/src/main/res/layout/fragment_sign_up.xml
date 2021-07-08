@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activity.FragmentSignIn">
+    tools:context=".ui.FragmentSignIn">
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/icon_button_min_size"
+        android:layout_marginHorizontal="@dimen/icon_button_min_size"
         android:hint="@string/auth_name"
         >
 
@@ -45,7 +45,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/icon_button_min_size"
+        android:layout_marginHorizontal="@dimen/icon_button_min_size"
         android:hint="@string/password"
         app:endIconMode="password_toggle"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
@@ -84,5 +84,6 @@
         android:paddingStart="@dimen/icon_button_min_size"
         android:paddingEnd="@dimen/icon_button_min_size"
         android:text="@string/sign_up" />
+
 
 </LinearLayout>
