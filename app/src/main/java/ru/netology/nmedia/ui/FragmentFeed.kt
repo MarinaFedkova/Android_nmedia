@@ -1,4 +1,4 @@
-package ru.netology.nmedia.activity
+package ru.netology.nmedia.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -15,10 +15,10 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.R.id.action_fragmentFeed_to_editPostFragment
-import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
+import ru.netology.nmedia.ui.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInterfactionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -27,6 +27,7 @@ import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 import java.io.File
 
+@AndroidEntryPoint
 class FragmentFeed : Fragment() {
     private val viewModel: PostViewModel by viewModels(
         ownerProducer = ::requireParentFragment
@@ -35,8 +36,6 @@ class FragmentFeed : Fragment() {
         ownerProducer = ::requireParentFragment
     )
 
-
-    @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -126,8 +125,8 @@ class FragmentFeed : Fragment() {
         val badge = requireContext().let { BadgeDrawable.create(it) }
             .apply { isVisible = true }
 
-        binding.newer.doOnPreDraw { BadgeUtils.attachBadgeDrawable(badge, binding.newer) }
-        binding.newer.isInvisible = true
+//        binding.newer.doOnPreDraw { BadgeUtils.attachBadgeDrawable(badge, binding.newer) }
+//        binding.newer.isInvisible = true
 
         viewModel.newerCount.observe(viewLifecycleOwner) { state ->
             if (state > 0) {
