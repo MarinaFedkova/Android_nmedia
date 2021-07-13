@@ -4,10 +4,14 @@ import android.app.Application
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -50,26 +54,27 @@ class PostViewModel @Inject constructor(
     auth: AppAuth
 ) : ViewModel() {
 
-    val data: LiveData<FeedModel> = auth.authStateFlow
+    private val cashed = repository.data
+        .cachedIn(viewModelScope)
+
+    val data: Flow<PagingData<Post>> = auth.authStateFlow
         .flatMapLatest { (myId, _) ->
-            repository.data
-                .map { posts ->
-                    FeedModel(
-                        posts.map { it.copy(ownedByMe = it.authorId == myId) },
-                        posts.isEmpty()
-                    )
+            repository.data.map {
+                it.map { post ->
+                    post.copy(ownedByMe = post.authorId == myId)
                 }
-        }.asLiveData(Dispatchers.Default)
+            }
+        }
 
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    val newerCount: LiveData<Int> = data.switchMap {
+   /* val newerCount: LiveData<Int> = data.switchMap {
         repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
             .catch { e -> e.printStackTrace() }
             .asLiveData()
-    }
+    }*/
 
     private val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
@@ -87,7 +92,7 @@ class PostViewModel @Inject constructor(
     fun loadPosts() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(loading = true)
-            repository.getAll()
+            //repository.stream.cachedIn(viewModelScope)
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)
@@ -97,7 +102,7 @@ class PostViewModel @Inject constructor(
     fun readAll() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(loading = true)
-            repository.readAll()
+            //repository.readAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)
@@ -105,7 +110,7 @@ class PostViewModel @Inject constructor(
     }
 
     fun likeById(id: Long) {
-        if (data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
+       /* if (data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
             viewModelScope.launch {
                 try {
                     repository.likeById(id)
@@ -121,11 +126,11 @@ class PostViewModel @Inject constructor(
                     _dataState.value = FeedModelState(error = true)
                 }
             }
-        }
+        }*/
     }
 
     fun removeById(id: Long) {
-        val posts = data.value?.posts.orEmpty()
+        /*val posts = data.value?.posts.orEmpty()
             .filter { it.id != id }
         data.value?.copy(posts = posts, empty = posts.isEmpty())
 
@@ -144,23 +149,13 @@ class PostViewModel @Inject constructor(
             } catch (e: Exception) {
                 _dataState.value = FeedModelState(error = true)
             }
-        }
+        }*/
     }
 
     suspend fun repostById(id: Long) = repository.repostById(id)
     suspend fun video() = repository.video()
 
-    fun refreshPosts() = viewModelScope.launch {
-        try {
-            _dataState.value = FeedModelState(refresh = true)
-            repository.getAll()
-            _dataState.value = FeedModelState()
-        } catch (e: Exception) {
-            _dataState.value = FeedModelState(error = true)
-        }
-    }
-
-    fun save() {
+     fun save() {
         edited.value?.let {
             _postCreated.value = Unit
             viewModelScope.launch {

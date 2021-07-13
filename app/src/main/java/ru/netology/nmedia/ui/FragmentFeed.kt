@@ -11,24 +11,39 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.R
 import ru.netology.nmedia.R.id.action_fragmentFeed_to_editPostFragment
 import ru.netology.nmedia.ui.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.adapter.OnInterfactionListener
 import ru.netology.nmedia.adapter.PostsAdapter
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 import java.io.File
+import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FragmentFeed : Fragment() {
+
+    @Inject
+    lateinit var repository: PostRepository
+
+    @Inject
+    lateinit var auth: AppAuth
+
     private val viewModel: PostViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
@@ -107,19 +122,18 @@ class FragmentFeed : Fragment() {
         })
 
         binding.list.adapter = adapter
-        viewModel.dataState.observe(viewLifecycleOwner) { state ->
-            binding.progress.isVisible = state.loading
-            binding.swipeRefreshLayout.isRefreshing = state.refresh
-            if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
-                    .show()
-            }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.data.collectLatest(adapter::submitData)
         }
 
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            binding.emptyText.isVisible = state.empty
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest { state ->
+                binding.swipeRefreshLayout.isRefreshing =
+                    state.refresh is LoadState.Loading ||
+                    state.prepend is LoadState.Loading ||
+                    state.append is LoadState.Loading
+            }
         }
 
         val badge = requireContext().let { BadgeDrawable.create(it) }
@@ -128,17 +142,17 @@ class FragmentFeed : Fragment() {
 //        binding.newer.doOnPreDraw { BadgeUtils.attachBadgeDrawable(badge, binding.newer) }
 //        binding.newer.isInvisible = true
 
-        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+    /*    viewModel.newerCount.observe(viewLifecycleOwner) { state ->
             if (state > 0) {
                 binding.newer.isVisible = true
                 badge.number = state
-            }else {
+            } else {
                 binding.newer.isInvisible = true
             }
-        }
+        }*/
 
         binding.newer.setOnClickListener {
-             binding.list.smoothScrollToPosition(0)
+            binding.list.smoothScrollToPosition(0)
             binding.newer.isInvisible = true
             viewModel.readAll()
 
@@ -158,7 +172,7 @@ class FragmentFeed : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.refreshPosts()
+            adapter.refresh()
         }
         return binding.root
     }

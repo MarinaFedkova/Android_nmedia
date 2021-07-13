@@ -33,6 +33,21 @@ fun retrofit(okhttp: OkHttpClient): Retrofit =
 
 interface ApiService {
 
+    @GET("posts/latest")
+    suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
+
+    @GET("posts/{id}/before")
+    suspend fun getBefore(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Post>>
+
+    @GET("posts/{id}/after")
+    suspend fun getAfter(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Post>>
+
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
 
