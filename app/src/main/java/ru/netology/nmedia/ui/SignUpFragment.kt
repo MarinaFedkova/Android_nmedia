@@ -15,7 +15,7 @@ import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.viewmodel.AuthViewModel
 
 @AndroidEntryPoint
-class FragmentSignUp : Fragment() {
+class SignUpFragment : Fragment() {
     private val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(

@@ -28,7 +28,6 @@ class NMediaApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         setupAuth()
-        //setupWork()
     }
 
     override fun getWorkManagerConfiguration() =

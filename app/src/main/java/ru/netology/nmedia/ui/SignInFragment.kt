@@ -14,7 +14,7 @@ import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.viewmodel.AuthViewModel
 
 @AndroidEntryPoint
-class FragmentSignIn : Fragment() {
+class SignInFragment : Fragment() {
     private val viewModelAuth: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
@@ -24,17 +24,12 @@ class FragmentSignIn : Fragment() {
         val binding = FragmentSignInBinding.inflate(inflater, container, false)
 
         binding.buttonSignIn.setOnClickListener {
-//            if (binding.login.text == null) {
-//                binding.login.error = getString(R.string.error_edit)
-//                return@setOnClickListener
-//            } else {
-                val login = binding.login.text?.trim().toString()
-                val pass = binding.password.text?.trim().toString()
-                viewModelAuth.authentication(login, pass)
-                AndroidUtils.hideKeyboard(it)
-                findNavController().navigateUp()
-            }
-       //}
+            val login = binding.login.text?.trim().toString()
+            val pass = binding.password.text?.trim().toString()
+            viewModelAuth.authentication(login, pass)
+            AndroidUtils.hideKeyboard(it)
+            findNavController().navigateUp()
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             findNavController().navigateUp()
@@ -42,18 +37,3 @@ class FragmentSignIn : Fragment() {
         return binding.root
     }
 }
-
-/*binding.buttonSignIn.setOnClickListener {
-    if (binding.login.text == null) {
-        binding.login.error = getString(R.string.error_edit)
-
-    } else {
-        val login = binding.login.text.toString()
-        val pass = binding.password.text?.trim().toString()
-
-        viewModelAuth.authentication(login, pass)
-        AndroidUtils.hideKeyboard(it)
-        findNavController().navigateUp()
-    }
-
-}*/

@@ -2,6 +2,7 @@ package ru.netology.nmedia.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +35,6 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 import java.io.File
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FragmentFeed : Fragment() {
 
@@ -93,15 +93,7 @@ class FragmentFeed : Fragment() {
                 }
                 val repostIntent = Intent.createChooser(intent, getString(R.string.chooser_repost))
                 startActivity(repostIntent)
-                //viewModel.repostById(post.id)
-            }
-
-            override fun onVideo(post: Post) {
-//                post.videoUrl?.let { viewModel.video() }
-//                if (!post.videoUrl.isNullOrEmpty()) {
-//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
-//                    startActivity(intent)
-//                }
+                viewModel.repostById(post.id)
             }
 
             override fun onOpenPost(post: Post) {
@@ -124,32 +116,30 @@ class FragmentFeed : Fragment() {
         binding.list.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
-            viewModel.data.collectLatest(adapter::submitData)
+            viewModel.dataPaging.collectLatest(adapter::submitData)
         }
 
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest { state ->
                 binding.swipeRefreshLayout.isRefreshing =
                     state.refresh is LoadState.Loading ||
-                    state.prepend is LoadState.Loading ||
-                    state.append is LoadState.Loading
+                            state.prepend is LoadState.Loading ||
+                            state.append is LoadState.Loading
             }
         }
 
         val badge = requireContext().let { BadgeDrawable.create(it) }
             .apply { isVisible = true }
 
-//        binding.newer.doOnPreDraw { BadgeUtils.attachBadgeDrawable(badge, binding.newer) }
-//        binding.newer.isInvisible = true
-
-    /*    viewModel.newerCount.observe(viewLifecycleOwner) { state ->
+        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
             if (state > 0) {
                 binding.newer.isVisible = true
                 badge.number = state
             } else {
                 binding.newer.isInvisible = true
             }
-        }*/
+        }
+
 
         binding.newer.setOnClickListener {
             binding.list.smoothScrollToPosition(0)

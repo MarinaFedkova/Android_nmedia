@@ -5,10 +5,9 @@ import androidx.paging.PagingState
 import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.error.ApiError
-import ru.netology.nmedia.error.NetworkError
 
 class PostPagingSource(
-    private val servise: ApiService,
+    private val service: ApiService,
 ) : PagingSource<Long, Post>() {
     override fun getRefreshKey(state: PagingState<Long, Post>): Long? {
         return null
@@ -17,13 +16,9 @@ class PostPagingSource(
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Post> {
         try {
             val response = when (params) {
-                is LoadParams.Refresh -> servise.getLatest(params.loadSize)
-                is LoadParams.Append -> servise.getBefore(params.key, params.loadSize)
-                is LoadParams.Prepend -> return LoadResult.Page(
-                    data = emptyList(),
-                    prevKey = params.key,
-                    nextKey = null
-                )
+                is LoadParams.Refresh -> service.getLatest(params.loadSize)
+                is LoadParams.Append -> service.getBefore(params.key, params.loadSize)
+                is LoadParams.Prepend -> service.getAfter(params.key, params.loadSize)
             }
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())

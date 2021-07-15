@@ -67,12 +67,12 @@
         tools:layout="@layout/fragment_image" />
     <fragment
         android:id="@+id/fragmentSignIn"
-        android:name="ru.netology.nmedia.ui.FragmentSignIn"
+        android:name="ru.netology.nmedia.ui.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" />
     <fragment
         android:id="@+id/fragmentSignUp"
-        android:name="ru.netology.nmedia.ui.FragmentSignUp"
+        android:name="ru.netology.nmedia.ui.SignUpFragment"
         android:label="FragmentSignUp" />
     <fragment
         android:id="@+id/editPostFragment"
