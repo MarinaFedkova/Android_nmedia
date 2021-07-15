@@ -36,7 +36,7 @@ import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FragmentFeed : Fragment() {
+class FeedFragment : Fragment() {
 
     @Inject
     lateinit var repository: PostRepository
