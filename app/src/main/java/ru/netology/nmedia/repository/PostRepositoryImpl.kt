@@ -36,10 +36,13 @@ class PostRepositoryImpl @Inject constructor(
     private val auth: AppAuth,
 ) : PostRepository {
 
-    private val pageSize = 10
+    private companion object {
+        private const val PAGE_SIZE = 5
+    }
+
 
     override val dataPaging: Flow<PagingData<Post>> = Pager(
-        config = PagingConfig(pageSize = 5, enablePlaceholders = false),
+        config = PagingConfig(PAGE_SIZE, enablePlaceholders = false),
         pagingSourceFactory = { PostPagingSource(apiService) }
     ).flow
 
@@ -64,7 +67,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun getLatest() {
         try {
-            val response = apiService.getLatest(pageSize)
+            val response = apiService.getLatest(PAGE_SIZE)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
