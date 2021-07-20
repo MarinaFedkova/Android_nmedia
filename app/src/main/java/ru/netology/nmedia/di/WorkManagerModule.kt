@@ -12,19 +12,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class WorkManagerModule {
-//    @Provides
-//    @Singleton
-//    fun provideWorkManager(
-//        @ApplicationContext context: Context,
-//        workerFactory: DependencyWorkerFactory,
-//    ): WorkManager {
-//        WorkManager.initialize(
-//            context, Configuration.Builder()
-//                .setWorkerFactory(workerFactory)
-//                .build()
-//        )
-//        return WorkManager.getInstance(context)
-//    }
     @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager = WorkManager.getInstance(context)

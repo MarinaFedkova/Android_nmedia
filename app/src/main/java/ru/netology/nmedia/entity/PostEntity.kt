@@ -8,7 +8,7 @@ import ru.netology.nmedia.dto.AttachmentType
 import ru.netology.nmedia.dto.Post
 
 @Entity
-data class PostEntity (
+data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val authorId: Long,
@@ -24,13 +24,38 @@ data class PostEntity (
     @Embedded
     var attachment: AttachmentEmbeddable?,
 ) {
-    fun toDto() = Post(id, authorId, author, authorAvatar, content, published, likedByMe, likes, reposts, videoUrl, attachment?.toDto())
+    fun toDto() = Post(
+        id,
+        authorId,
+        author,
+        authorAvatar,
+        content,
+        published,
+        likedByMe,
+        likes,
+        reposts,
+        videoUrl,
+        attachment?.toDto()
+    )
 
     companion object {
         fun fromDto(dto: Post, wasRead: Boolean = false) =
-            PostEntity(dto.id, dto.authorId, dto.author, dto.authorAvatar, dto.content, dto.published, dto.likedByMe, dto.likes, dto.reposts, dto.videoUrl, wasRead, AttachmentEmbeddable.fromDto(dto.attachment))
-        }
+            PostEntity(
+                dto.id,
+                dto.authorId,
+                dto.author,
+                dto.authorAvatar,
+                dto.content,
+                dto.published,
+                dto.likedByMe,
+                dto.likes,
+                dto.reposts,
+                dto.videoUrl,
+                wasRead,
+                AttachmentEmbeddable.fromDto(dto.attachment)
+            )
     }
+}
 
 data class AttachmentEmbeddable(
     var url: String,
@@ -45,7 +70,7 @@ data class AttachmentEmbeddable(
     }
 }
 
-    fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
-    fun List<Post>.toEntity(wasRead: Boolean = false): List<PostEntity> {
-        return map {PostEntity.fromDto(it, wasRead) }
-    }
+fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
+fun List<Post>.toEntity(wasRead: Boolean = false): List<PostEntity> {
+    return map { PostEntity.fromDto(it, wasRead) }
+}

@@ -25,11 +25,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class AppActivity : AppCompatActivity(R.layout.activity_app) {
-//    @Inject
-//    lateinit var repository: PostRepository
-//
-//    @Inject
-//    lateinit var workManager: WorkManager
 
     @Inject
     lateinit var auth: AppAuth

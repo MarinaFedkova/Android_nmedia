@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragmentFeed"
-        android:name="ru.netology.nmedia.ui.FragmentFeed"
+        android:name="ru.netology.nmedia.ui.FeedFragment"
         android:label="frahment_feed"
         tools:layout="@layout/fragment_feed" >
         <action
@@ -62,17 +62,17 @@
 
     <fragment
         android:id="@+id/fragmentImage"
-        android:name="ru.netology.nmedia.ui.FragmentImage"
+        android:name="ru.netology.nmedia.ui.ImageFragment"
         android:label="fragment_image"
         tools:layout="@layout/fragment_image" />
     <fragment
         android:id="@+id/fragmentSignIn"
-        android:name="ru.netology.nmedia.ui.FragmentSignIn"
+        android:name="ru.netology.nmedia.ui.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" />
     <fragment
         android:id="@+id/fragmentSignUp"
-        android:name="ru.netology.nmedia.ui.FragmentSignUp"
+        android:name="ru.netology.nmedia.ui.SignUpFragment"
         android:label="FragmentSignUp" />
     <fragment
         android:id="@+id/editPostFragment"

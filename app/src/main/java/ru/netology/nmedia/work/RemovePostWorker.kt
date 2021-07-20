@@ -37,19 +37,3 @@ class RemovePostWorker @AssistedInject constructor(
         }
     }
 }
-
-//@Singleton
-//class RemovePostsWorkerFactory @Inject constructor(
-//    private val repository: PostRepository,
-//) : WorkerFactory() {
-//    override fun createWorker(
-//        appContext: Context,
-//        workerClassName: String,
-//        workerParameters: WorkerParameters
-//    ): ListenableWorker? = when (workerClassName) {
-//        RemovePostWorker::class.java.name ->
-//            RemovePostWorker(appContext, workerParameters, repository)
-//        else ->
-//            null
-//    }
-//}

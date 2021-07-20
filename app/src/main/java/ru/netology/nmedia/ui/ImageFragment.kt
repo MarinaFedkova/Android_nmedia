@@ -14,7 +14,7 @@ import ru.netology.nmedia.databinding.FragmentImageBinding
 import ru.netology.nmedia.view.load
 
 @AndroidEntryPoint
-class FragmentImage : Fragment() {
+class ImageFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

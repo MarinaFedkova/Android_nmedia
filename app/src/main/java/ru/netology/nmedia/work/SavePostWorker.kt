@@ -37,19 +37,3 @@ class SavePostWorker @AssistedInject constructor(
         }
     }
 }
-
-//@Singleton
-//class SavePostsWorkerFactory @Inject constructor(
-//    private val repository: PostRepository,
-//) : WorkerFactory() {
-//    override fun createWorker(
-//        appContext: Context,
-//        workerClassName: String,
-//        workerParameters: WorkerParameters
-//    ): ListenableWorker? = when (workerClassName) {
-//        SavePostWorker::class.java.name ->
-//            SavePostWorker(appContext, workerParameters, repository)
-//        else ->
-//            null
-//    }
-//}

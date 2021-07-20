@@ -3,6 +3,9 @@ package ru.netology.nmedia.repository
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -32,13 +35,39 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val auth: AppAuth,
 ) : PostRepository {
-    override val data = postDao.getAll()
+
+    private companion object {
+        private const val PAGE_SIZE = 5
+    }
+
+
+    override val dataPaging: Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(PAGE_SIZE, enablePlaceholders = false),
+        pagingSourceFactory = { PostPagingSource(apiService) }
+    ).flow
+
+    override val dataDb = postDao.getAll()
         .map(List<PostEntity>::toDto)
-        .flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
         try {
             val response = apiService.getAll()
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            postDao.insert(body.toEntity(wasRead = true))
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun getLatest() {
+        try {
+            val response = apiService.getLatest(PAGE_SIZE)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -187,12 +216,12 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun video() {
-        //TODO
-    }
-
     override suspend fun repostById(id: Long) {
-        //TODO
+        try {
+            return postDao.repostById(id)
+        } catch (e: Exception) {
+            throw UnknownError
+        }
     }
 
     override suspend fun saveWork(post: Post, upload: MediaUpload?): Long =
