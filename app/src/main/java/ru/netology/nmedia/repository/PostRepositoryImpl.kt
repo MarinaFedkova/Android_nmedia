@@ -2,20 +2,18 @@ package ru.netology.nmedia.repository
 
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import androidx.lifecycle.*
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okio.IOException
-import ru.netology.nmedia.api.*
+import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dao.PostDao
+import ru.netology.nmedia.dao.PostRemoteKeyDao
 import ru.netology.nmedia.dao.PostWorkDao
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.*
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.PostWorkEntity
@@ -25,26 +23,33 @@ import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class PostRepositoryImpl @Inject constructor(
+    private val appDb: AppDb,
     private val postDao: PostDao,
+    private val postRemoteKeyDao: PostRemoteKeyDao,
     private val postWorkDao: PostWorkDao,
     private val apiService: ApiService,
     private val auth: AppAuth,
 ) : PostRepository {
 
     private companion object {
-        private const val PAGE_SIZE = 5
+        private const val PAGE_SIZE = 15
     }
 
-
+    @OptIn(ExperimentalPagingApi::class)
     override val dataPaging: Flow<PagingData<Post>> = Pager(
-        config = PagingConfig(PAGE_SIZE, enablePlaceholders = false),
-        pagingSourceFactory = { PostPagingSource(apiService) }
-    ).flow
+        config = PagingConfig(PAGE_SIZE),
+        remoteMediator = PostRemoteMediator(apiService, appDb, postDao, postRemoteKeyDao),
+        pagingSourceFactory = postDao::getPagingSource,
+    ).flow.map { pagingData ->
+        pagingData.map(PostEntity::toDto)
+    }
 
     override val dataDb = postDao.getAll()
         .map(List<PostEntity>::toDto)
@@ -164,7 +169,6 @@ class PostRepositoryImpl @Inject constructor(
             throw UnknownError
         }
     }
-
 
     override suspend fun upload(upload: MediaUpload): Media {
         try {

@@ -45,6 +45,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
@@ -69,17 +70,18 @@ dependencies {
     def mdc_version = "1.4.0"
     def nav_version = "2.3.5"
     def room_version = "2.3.0"
-    def firebase_version = "28.2.0"
+    def firebase_version = "28.2.1"
     def glide_version = "4.12.0"
     def retrofit_version = "2.9.0"
     def retrofitgson_version = "2.9.0"
     def okhttplogging_version = "4.9.1"
-    def coroutines_version = "1.5.0"
+    def coroutines_version = "1.5.1"
     def imagepicker_version = "2.1"
     def workmanager_version = "2.5.0"
     def hilt_work_version = "1.0.0"
-    def play_services_base_version = "17.6.0"
     def paging_version = "3.0.0"
+    def play_services_base_version = "17.6.0"
+    def hilt_compiler_version = "1.0.0"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "androidx.core:core-ktx:$core_version"
@@ -111,11 +113,11 @@ dependencies {
     implementation "com.github.dhaval2404:imagepicker:$imagepicker_version"
     implementation "androidx.work:work-runtime-ktx:$workmanager_version"
     implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     implementation "androidx.hilt:hilt-work:$hilt_work_version"
-    kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
+    implementation "androidx.hilt:hilt-navigation-fragment:$hilt_work_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_compiler_version"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
-
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
