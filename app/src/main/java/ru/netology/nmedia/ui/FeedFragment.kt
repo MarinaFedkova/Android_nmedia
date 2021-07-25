@@ -38,12 +38,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
 
-    @Inject
-    lateinit var repository: PostRepository
-
-    @Inject
-    lateinit var auth: AppAuth
-
     private val viewModel: PostViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
