@@ -5,6 +5,7 @@ import androidx.core.net.toFile
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.insertSeparators
 import androidx.paging.map
 import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.AdItem
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.MediaUpload
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
@@ -26,6 +29,7 @@ import ru.netology.nmedia.util.SingleLiveEvent
 import ru.netology.nmedia.work.RemovePostWorker
 import ru.netology.nmedia.work.SavePostWorker
 import javax.inject.Inject
+import kotlin.random.Random
 
 private val empty = Post(
     id = 0,
@@ -51,14 +55,28 @@ class PostViewModel @Inject constructor(
     auth: AppAuth
 ) : ViewModel() {
 
-    private val cashed = repository.dataPaging
+    private val cashed: Flow<PagingData<FeedItem>> = repository
+        .dataPaging
+        .map {
+            it.insertSeparators(
+                generator = { before, after ->
+                    if (before?.id?.rem(5) != 0L) null else
+                        AdItem(
+                            Random.nextLong(),
+                            "https://netology.ru",
+                            "figma.jpg",
+                        )
+                }
+            )
+        }
         .cachedIn(viewModelScope)
 
-    val dataPaging: Flow<PagingData<Post>> = auth.authStateFlow
+    val dataPaging: Flow<PagingData<FeedItem>> = auth.authStateFlow
         .flatMapLatest { (myId, _) ->
-            repository.dataPaging.map {
-                it.map { post ->
-                    post.copy(ownedByMe = post.authorId == myId)
+            cashed
+                .map {
+                it.map { item ->
+                    if (item !is Post) item else item.copy(ownedByMe = item.authorId == myId)
                 }
             }
         }
