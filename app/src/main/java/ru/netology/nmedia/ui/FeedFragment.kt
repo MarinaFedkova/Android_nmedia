@@ -1,13 +1,10 @@
 package ru.netology.nmedia.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,25 +12,21 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import ru.netology.nmedia.R
 import ru.netology.nmedia.R.id.action_fragmentFeed_to_editPostFragment
 import ru.netology.nmedia.ui.NewPostFragment.Companion.textArg
-import ru.netology.nmedia.adapter.OnInterfactionListener
-import ru.netology.nmedia.adapter.PostsAdapter
-import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.adapter.FeedAdapter
+import ru.netology.nmedia.adapter.PagingLoadStateAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
 import java.io.File
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
@@ -52,7 +45,7 @@ class FeedFragment : Fragment() {
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
-        val adapter = PostsAdapter(object : OnInterfactionListener {
+        val adapter = FeedAdapter(object : OnInteractionListener {
             override fun onEdit(post: Post) {
                 findNavController().navigate(
                     action_fragmentFeed_to_editPostFragment,
@@ -106,8 +99,22 @@ class FeedFragment : Fragment() {
             }
 
         })
+        binding.list.addItemDecoration(
+            DividerItemDecoration(binding.list.context, DividerItemDecoration.VERTICAL)
+        )
 
-        binding.list.adapter = adapter
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
+                override fun onRetry() {
+                    adapter.retry()
+                }
+            }),
+            footer = PagingLoadStateAdapter(object : PagingLoadStateAdapter.OnInteractionListener {
+                override fun onRetry() {
+                    adapter.retry()
+                }
+            }),
+        )
 
         lifecycleScope.launchWhenCreated {
             viewModel.dataPaging.collectLatest(adapter::submitData)
@@ -116,9 +123,7 @@ class FeedFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest { state ->
                 binding.swipeRefreshLayout.isRefreshing =
-                    state.refresh is LoadState.Loading ||
-                            state.prepend is LoadState.Loading ||
-                            state.append is LoadState.Loading
+                    state.refresh is LoadState.Loading 
             }
         }
 
@@ -158,6 +163,8 @@ class FeedFragment : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             adapter.refresh()
         }
+
+
         return binding.root
     }
 }
